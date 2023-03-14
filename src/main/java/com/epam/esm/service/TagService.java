@@ -2,14 +2,14 @@ package com.epam.esm.service;
 
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.TagRepository;
+import com.epam.esm.service.interfaces.TagServiceInterface;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TagService {
+public class TagService implements TagServiceInterface {
     private final TagRepository tagDao;
 
     public TagService(TagRepository tagDao) {

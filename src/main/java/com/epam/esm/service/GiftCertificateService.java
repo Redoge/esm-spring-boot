@@ -5,6 +5,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.service.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mapper.GiftCertificateMapper;
 import com.epam.esm.util.sorter.GiftCertificateSorter;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.Optional;
 import static io.micrometer.common.util.StringUtils.isNotEmpty;
 
 @Service
-public class GiftCertificateService {
+public class GiftCertificateService implements GiftCertificateServiceInterface {
     private final GiftCertificateRepository giftCertificateDao;
     private final GiftCertificateSorter giftCertificateSorter;
     private final GiftCertificateMapper giftCertificateMapper;
