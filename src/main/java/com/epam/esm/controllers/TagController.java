@@ -1,10 +1,9 @@
-package com.epam.esm.controller;
+package com.epam.esm.controllers;
 
-import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.GiftCertificateNotFoundException;
-import com.epam.esm.exception.TagIsExistException;
-import com.epam.esm.exception.TagNotFoundException;
-import com.epam.esm.service.interfaces.TagServiceInterface;
+import com.epam.esm.entities.Tag;
+import com.epam.esm.exceptions.TagIsExistException;
+import com.epam.esm.exceptions.TagNotFoundException;
+import com.epam.esm.services.interfaces.TagServiceInterface;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

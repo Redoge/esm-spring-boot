@@ -1,10 +1,10 @@
-package com.epam.esm.service;
+package com.epam.esm.services;
 
-import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.TagIsExistException;
-import com.epam.esm.exception.TagNotFoundException;
-import com.epam.esm.repository.TagRepository;
-import com.epam.esm.service.interfaces.TagServiceInterface;
+import com.epam.esm.entities.Tag;
+import com.epam.esm.exceptions.TagIsExistException;
+import com.epam.esm.exceptions.TagNotFoundException;
+import com.epam.esm.repositories.TagRepository;
+import com.epam.esm.services.interfaces.TagServiceInterface;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

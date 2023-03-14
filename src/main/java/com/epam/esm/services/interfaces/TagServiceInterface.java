@@ -1,9 +1,8 @@
-package com.epam.esm.service.interfaces;
+package com.epam.esm.services.interfaces;
 
-import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.GiftCertificateNotFoundException;
-import com.epam.esm.exception.TagIsExistException;
-import com.epam.esm.exception.TagNotFoundException;
+import com.epam.esm.entities.Tag;
+import com.epam.esm.exceptions.TagIsExistException;
+import com.epam.esm.exceptions.TagNotFoundException;
 
 import java.util.List;
 import java.util.Optional;

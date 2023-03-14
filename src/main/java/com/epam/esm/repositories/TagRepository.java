@@ -1,6 +1,6 @@
-package com.epam.esm.repository;
+package com.epam.esm.repositories;
 
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entities.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

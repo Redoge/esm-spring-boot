@@ -1,13 +1,11 @@
-package com.epam.esm.util.sorter;
+package com.epam.esm.util.sorters;
 
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entities.GiftCertificate;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.util.enums.SortingOrder;
 import com.epam.esm.util.enums.SortingType;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
