@@ -1,8 +1,8 @@
-package com.epam.esm.controller.advice;
+package com.epam.esm.controllers.advice;
 
 import com.epam.esm.dto.ErrorDto;
-import com.epam.esm.exception.TagIsExistException;
-import com.epam.esm.exception.TagNotFoundException;
+import com.epam.esm.exceptions.TagIsExistException;
+import com.epam.esm.exceptions.TagNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
