@@ -1,35 +1,40 @@
-package com.epam.esm.service;
+package com.epam.esm.services;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.GiftCertificateNotFoundException;
+import com.epam.esm.entities.GiftCertificate;
+import com.epam.esm.entities.Tag;
+import com.epam.esm.exceptions.BadRequestException;
+import com.epam.esm.exceptions.GiftCertificateIsExistException;
+import com.epam.esm.exceptions.GiftCertificateNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
-import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.service.interfaces.GiftCertificateServiceInterface;
-import com.epam.esm.util.mapper.GiftCertificateMapper;
-import com.epam.esm.util.sorter.GiftCertificateSorter;
+import com.epam.esm.repositories.GiftCertificateRepository;
+import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
+import com.epam.esm.util.mappers.GiftCertificateMapper;
+import com.epam.esm.util.sorters.GiftCertificateSorter;
+import com.epam.esm.util.validators.GiftCertificateValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static io.micrometer.common.util.StringUtils.isNotEmpty;
-import static java.lang.String.valueOf;
 
 @Service
 public class GiftCertificateService implements GiftCertificateServiceInterface {
     private final GiftCertificateRepository giftCertificateDao;
     private final GiftCertificateSorter giftCertificateSorter;
     private final GiftCertificateMapper giftCertificateMapper;
+    private final GiftCertificateValidator giftCertificateValidator;
     private final TagService tagService;
 
     public GiftCertificateService(GiftCertificateRepository giftCertificateDao, GiftCertificateSorter giftCertificateSorter,
-                                  GiftCertificateMapper giftCertificateMapper, TagService tagService) {
+                                  GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator, TagService tagService) {
         this.giftCertificateDao = giftCertificateDao;
         this.giftCertificateSorter = giftCertificateSorter;
         this.giftCertificateMapper = giftCertificateMapper;
+        this.giftCertificateValidator = giftCertificateValidator;
         this.tagService = tagService;
 
     }
@@ -39,34 +44,46 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     }
 
     public Optional<GiftCertificate> getById(long id) throws GiftCertificateNotFoundException {
-        if(!giftCertificateDao.existsById(id)){
+        if (!giftCertificateDao.existsById(id)) {
             throw new GiftCertificateNotFoundException("id " + id);
         }
         return giftCertificateDao.findById(id);
     }
 
     public Optional<GiftCertificate> getByName(String name) throws GiftCertificateNotFoundException {
-        if(!giftCertificateDao.existsByName(name)){
+        if (!giftCertificateDao.existsByName(name)) {
             throw new GiftCertificateNotFoundException("name " + name);
         }
         return giftCertificateDao.findByName(name);
     }
 
     public void deleteById(long id) throws GiftCertificateNotFoundException {
-        if(!giftCertificateDao.existsById(id)){
+        if (!giftCertificateDao.existsById(id)) {
             throw new GiftCertificateNotFoundException("id " + id);
         }
         giftCertificateDao.deleteById(id);
     }
 
-    public void save(GiftCertificate giftCertificate) {
+    public void save(GiftCertificate giftCertificate) throws GiftCertificateIsExistException, BadRequestException {
+        giftCertificate.setCreateDate(LocalDateTime.now());
+        giftCertificate.setLastUpdateDate(LocalDateTime.now());
+        var valid = giftCertificateValidator.isValid(giftCertificate);
+        if (!valid) {
+            throw new BadRequestException();
+        }
+        if (giftCertificateDao.existsByName(giftCertificate.getName())) {
+            throw new GiftCertificateIsExistException("name " + giftCertificate.getName());
+        }
         giftCertificateDao.save(giftCertificate);
+    }
+    public void save(GiftCertificateSaveRequestPojo giftCertificate) throws GiftCertificateIsExistException, BadRequestException {
+        save(giftCertificateMapper.createGCertBySaveRequestPojoAndGCert(giftCertificate));
     }
 
     @Transactional
-    public void update(GiftCertificateSaveRequestPojo giftCertificatePojo) {
+    public void update(GiftCertificateSaveRequestPojo giftCertificatePojo) throws GiftCertificateNotFoundException {
         Optional<GiftCertificate> gCert = getById(giftCertificatePojo.getId());
-        if(gCert.isPresent()) {
+        if (gCert.isPresent()) {
             var newGCert = giftCertificateMapper.createUpdatedGCertBySaveRequestPojoAndGCert(giftCertificatePojo, gCert.get());
             List<Tag> tags = tagService.saveAll(giftCertificatePojo.getTags()
                     .stream()

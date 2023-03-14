@@ -1,7 +1,9 @@
-package com.epam.esm.service.interfaces;
+package com.epam.esm.services.interfaces;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.GiftCertificateNotFoundException;
+import com.epam.esm.entities.GiftCertificate;
+import com.epam.esm.exceptions.BadRequestException;
+import com.epam.esm.exceptions.GiftCertificateIsExistException;
+import com.epam.esm.exceptions.GiftCertificateNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 
@@ -17,9 +19,10 @@ public interface GiftCertificateServiceInterface {
 
     void deleteById(long id) throws GiftCertificateNotFoundException;
 
-    void save(GiftCertificate giftCertificate);
+    void save(GiftCertificate giftCertificate) throws GiftCertificateIsExistException, BadRequestException;
+    void save(GiftCertificateSaveRequestPojo giftCertificatePojo) throws GiftCertificateIsExistException, BadRequestException;
 
-    void update(GiftCertificateSaveRequestPojo giftCertificatePojo);
+    void update(GiftCertificateSaveRequestPojo giftCertificatePojo) throws GiftCertificateNotFoundException;
 
     List<GiftCertificate> getByGiftCertificateSearchRequestPojo(GiftCertificateSearchRequestPojo certsSearchReqPojo);
 }
