@@ -1,4 +1,4 @@
-package com.epam.esm.exception;
+package com.epam.esm.exceptions;
 
 public class TagIsExistException extends Exception{
     public TagIsExistException() {
