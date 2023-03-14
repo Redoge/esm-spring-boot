@@ -18,7 +18,7 @@ public class GiftCertificate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gift_certificate_id")
     private Long id;
-    @Column(name = "gift_certificate_name")
+    @Column(name = "gift_certificate_name", unique = true)
     private String name;
     @Column(name = "gift_certificate_description")
     private String description;
