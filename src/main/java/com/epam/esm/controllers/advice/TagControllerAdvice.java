@@ -15,12 +15,12 @@ public class TagControllerAdvice {
     @ExceptionHandler(value = {TagNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto tagNotFoundException(TagNotFoundException ex) {
-        return new ErrorDto(format("Tag with id %s - NOT FOUND!", ex.getMessage()), 404);
+        return new ErrorDto(format("Tag with %s - NOT FOUND!", ex.getMessage()), 404);
     }
 
     @ExceptionHandler(value = {TagIsExistException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto TagIsExistException(TagIsExistException ex) {
-        return new ErrorDto(format("Tag with name %s is exist!", ex.getMessage()), 400);
+        return new ErrorDto(format("Tag with %s is exist!", ex.getMessage()), 400);
     }
 }

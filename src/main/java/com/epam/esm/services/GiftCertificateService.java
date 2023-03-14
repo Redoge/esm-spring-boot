@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.GiftCertificateNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.repository.GiftCertificateRepository;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static io.micrometer.common.util.StringUtils.isNotEmpty;
+import static java.lang.String.valueOf;
 
 @Service
 public class GiftCertificateService implements GiftCertificateServiceInterface {
@@ -36,15 +38,24 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         return giftCertificateDao.findAll();
     }
 
-    public Optional<GiftCertificate> getById(long id) {
+    public Optional<GiftCertificate> getById(long id) throws GiftCertificateNotFoundException {
+        if(!giftCertificateDao.existsById(id)){
+            throw new GiftCertificateNotFoundException("id " + id);
+        }
         return giftCertificateDao.findById(id);
     }
 
-    public Optional<GiftCertificate> getByName(String name) {
+    public Optional<GiftCertificate> getByName(String name) throws GiftCertificateNotFoundException {
+        if(!giftCertificateDao.existsByName(name)){
+            throw new GiftCertificateNotFoundException("name " + name);
+        }
         return giftCertificateDao.findByName(name);
     }
 
-    public void deleteById(long id) {
+    public void deleteById(long id) throws GiftCertificateNotFoundException {
+        if(!giftCertificateDao.existsById(id)){
+            throw new GiftCertificateNotFoundException("id " + id);
+        }
         giftCertificateDao.deleteById(id);
     }
 

@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.GiftCertificateNotFoundException;
 import com.epam.esm.exception.TagIsExistException;
 import com.epam.esm.exception.TagNotFoundException;
 import com.epam.esm.service.interfaces.TagServiceInterface;
@@ -38,7 +39,7 @@ public class TagController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Tag> createTag(@RequestBody Tag tag) throws TagIsExistException {
+    public ResponseEntity<Tag> createTag(@RequestBody Tag tag) throws TagIsExistException, TagNotFoundException {
         tagService.save(tag.getName());
         tag = tagService.getByName(tag.getName()).get();
         return ResponseEntity.ok(tag);

@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.String.valueOf;
-
 @Service
 public class TagService implements TagServiceInterface {
     private final TagRepository tagDao;
@@ -28,18 +26,21 @@ public class TagService implements TagServiceInterface {
     public Optional<Tag> getById(long id) throws TagNotFoundException {
         Optional<Tag> tag = tagDao.findById(id);
         if (tag.isEmpty())
-            throw new TagNotFoundException(valueOf(id));
+            throw new TagNotFoundException("id " + id);
         return tag;
     }
 
-    public Optional<Tag> getByName(String name) {
-        return tagDao.findByName(name);
+    public Optional<Tag> getByName(String name) throws TagNotFoundException {
+        Optional<Tag> tag = tagDao.findByName(name);
+        if (tag.isEmpty())
+            throw new TagNotFoundException("name " + name);
+        return tag;
     }
 
     @Transactional
     public void deleteById(long id) throws TagNotFoundException {
         if (!tagDao.existsById(id)) {
-            throw new TagNotFoundException(valueOf(id));
+            throw new TagNotFoundException("id " + id);
         }
         tagDao.deleteById(id);
     }
@@ -47,7 +48,7 @@ public class TagService implements TagServiceInterface {
     @Transactional
     public void save(String tagName) throws TagIsExistException {
         if (tagDao.existsByName(tagName)) {
-            throw new TagIsExistException(tagName);
+            throw new TagIsExistException("name " + tagName);
         }
         tagDao.save(new Tag(tagName));
     }
