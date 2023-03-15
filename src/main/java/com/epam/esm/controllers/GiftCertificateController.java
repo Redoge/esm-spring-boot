@@ -17,7 +17,6 @@ import java.util.List;
 @RequestMapping("/api/certificates")
 public class GiftCertificateController {
     private final GiftCertificateServiceInterface giftCertificateService;
-
     public GiftCertificateController(GiftCertificateServiceInterface gCertService) {
         this.giftCertificateService = gCertService;
     }
@@ -40,9 +39,8 @@ public class GiftCertificateController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<?> create(@RequestBody GiftCertificateSaveRequestPojo giftCertPojo) throws GiftCertificateNotFoundException, GiftCertificateIsExistException, BadRequestException {
-        giftCertificateService.save(giftCertPojo);
-        var giftCertificate = giftCertificateService.getByName(giftCertPojo.getName()).get();
+    public ResponseEntity<?> create(@RequestBody GiftCertificateSaveRequestPojo giftCertPojo) throws GiftCertificateIsExistException, BadRequestException {
+        var giftCertificate  = giftCertificateService.save(giftCertPojo);
         return ResponseEntity.ok(giftCertificate);
     }
 

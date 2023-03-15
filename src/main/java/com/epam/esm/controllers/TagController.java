@@ -38,9 +38,8 @@ public class TagController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Tag> createTag(@RequestBody Tag tag) throws TagIsExistException, TagNotFoundException {
-        tagService.save(tag.getName());
-        tag = tagService.getByName(tag.getName()).get();
-        return ResponseEntity.ok(tag);
+    public ResponseEntity<Tag> createTag(@RequestBody Tag tag) throws TagIsExistException{
+        var createdTag = tagService.save(tag.getName());
+        return ResponseEntity.ok(createdTag);
     }
 }
