@@ -5,18 +5,22 @@ import com.epam.esm.exceptions.TagIsExistException;
 import com.epam.esm.exceptions.TagNotFoundException;
 import com.epam.esm.repositories.TagRepository;
 import com.epam.esm.services.interfaces.TagServiceInterface;
+import com.epam.esm.util.filters.TagFilter;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class TagService implements TagServiceInterface {
     private final TagRepository tagDao;
+    private final TagFilter tagFilter;
 
-    public TagService(TagRepository tagDao) {
+    public TagService(TagRepository tagDao, TagFilter tagFilter) {
         this.tagDao = tagDao;
+        this.tagFilter = tagFilter;
     }
 
     public List<Tag> getAll() {
@@ -46,14 +50,27 @@ public class TagService implements TagServiceInterface {
     }
 
     @Transactional
-    public void save(String tagName) throws TagIsExistException {
+    public Tag save(String tagName) throws TagIsExistException {
         if (tagDao.existsByName(tagName)) {
             throw new TagIsExistException("name " + tagName);
         }
-        tagDao.save(new Tag(tagName));
+        return tagDao.save(new Tag(tagName));
     }
 
-    protected List<Tag> saveAll(List<Tag> tags) {
+    @Transactional
+    public List<Tag> saveAll(List<Tag> tags) {
         return tagDao.saveAll(tags);
+    }
+    /**
+     * Method receive List<String> with tags name and return List<Tag> by this name. If Tag not exist then will be created
+     */
+    @Transactional
+    public List<Tag> getTagsByTagName(List<String> tags) {
+        var allExistTag = getAll();
+        var existTag = new ArrayList<>(tagFilter.isExistByName(allExistTag, tags));
+        var notExistTag = tagFilter.isNotExistByName(allExistTag, tags);
+        var createdTags = saveAll(notExistTag);
+        existTag.addAll(createdTags);
+        return existTag;
     }
 }

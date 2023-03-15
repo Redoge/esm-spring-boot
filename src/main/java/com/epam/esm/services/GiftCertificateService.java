@@ -44,19 +44,21 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     }
 
     public Optional<GiftCertificate> getById(long id) throws GiftCertificateNotFoundException {
-        if (!giftCertificateDao.existsById(id)) {
+        var gCerts = giftCertificateDao.findById(id);
+        if (gCerts.isEmpty()) {
             throw new GiftCertificateNotFoundException("id " + id);
         }
-        return giftCertificateDao.findById(id);
+        return gCerts;
     }
 
     public Optional<GiftCertificate> getByName(String name) throws GiftCertificateNotFoundException {
-        if (!giftCertificateDao.existsByName(name)) {
+        var gCerts = giftCertificateDao.findByName(name);
+        if (gCerts.isEmpty()) {
             throw new GiftCertificateNotFoundException("name " + name);
         }
-        return giftCertificateDao.findByName(name);
+        return gCerts;
     }
-
+    @Transactional
     public void deleteById(long id) throws GiftCertificateNotFoundException {
         if (!giftCertificateDao.existsById(id)) {
             throw new GiftCertificateNotFoundException("id " + id);
@@ -64,7 +66,8 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         giftCertificateDao.deleteById(id);
     }
 
-    public void save(GiftCertificate giftCertificate) throws GiftCertificateIsExistException, BadRequestException {
+    @Transactional
+    public GiftCertificate save(GiftCertificate giftCertificate) throws GiftCertificateIsExistException, BadRequestException {
         giftCertificate.setCreateDate(LocalDateTime.now());
         giftCertificate.setLastUpdateDate(LocalDateTime.now());
         var valid = giftCertificateValidator.isValid(giftCertificate);
@@ -74,10 +77,13 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         if (giftCertificateDao.existsByName(giftCertificate.getName())) {
             throw new GiftCertificateIsExistException("name " + giftCertificate.getName());
         }
-        giftCertificateDao.save(giftCertificate);
+        return giftCertificateDao.save(giftCertificate);
     }
-    public void save(GiftCertificateSaveRequestPojo giftCertificate) throws GiftCertificateIsExistException, BadRequestException {
-        save(giftCertificateMapper.createGCertBySaveRequestPojoAndGCert(giftCertificate));
+    @Transactional
+    public GiftCertificate save(GiftCertificateSaveRequestPojo giftCertificate) throws GiftCertificateIsExistException, BadRequestException {
+        var tags = tagService.getTagsByTagName(giftCertificate.getTags());
+        var gCertBySaveRequestPojoAndGCert = giftCertificateMapper.createGCertBySaveRequestPojoAndGCert(giftCertificate, tags);
+        return save(gCertBySaveRequestPojoAndGCert);
     }
 
     @Transactional
