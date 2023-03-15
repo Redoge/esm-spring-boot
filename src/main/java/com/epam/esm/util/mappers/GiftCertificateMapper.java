@@ -1,13 +1,16 @@
 package com.epam.esm.util.mappers;
 
 import com.epam.esm.entities.GiftCertificate;
+import com.epam.esm.entities.Tag;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class GiftCertificateMapper {
+
     public GiftCertificate createUpdatedGCertBySaveRequestPojoAndGCert(GiftCertificateSaveRequestPojo giftCertificatePojo,
                                                             GiftCertificate oldGiftCertificate) {
         return updateOnlyNewFieldsGiftCertificate(oldGiftCertificate, giftCertificatePojo);
@@ -31,12 +34,13 @@ public class GiftCertificateMapper {
         return oldGCert;
     }
 
-    public GiftCertificate createGCertBySaveRequestPojoAndGCert(GiftCertificateSaveRequestPojo giftCertificatePojo) {
+    public GiftCertificate createGCertBySaveRequestPojoAndGCert(GiftCertificateSaveRequestPojo giftCertificatePojo, List<Tag> tags) {
         var giftCetificate = new GiftCertificate();
         giftCetificate.setName(giftCertificatePojo.getName());
         giftCetificate.setDescription(giftCertificatePojo.getDescription());
         giftCetificate.setPrice(giftCertificatePojo.getPrice());
         giftCetificate.setDuration(giftCertificatePojo.getDuration());
+        giftCetificate.setTags(tags);
         return giftCetificate;
     }
 }
