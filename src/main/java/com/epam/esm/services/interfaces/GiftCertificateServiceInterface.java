@@ -19,8 +19,8 @@ public interface GiftCertificateServiceInterface {
 
     void deleteById(long id) throws GiftCertificateNotFoundException;
 
-    void save(GiftCertificate giftCertificate) throws GiftCertificateIsExistException, BadRequestException;
-    void save(GiftCertificateSaveRequestPojo giftCertificatePojo) throws GiftCertificateIsExistException, BadRequestException;
+    GiftCertificate save(GiftCertificate giftCertificate) throws GiftCertificateIsExistException, BadRequestException;
+    GiftCertificate save(GiftCertificateSaveRequestPojo giftCertificatePojo) throws GiftCertificateIsExistException, BadRequestException;
 
     void update(GiftCertificateSaveRequestPojo giftCertificatePojo) throws GiftCertificateNotFoundException;
 

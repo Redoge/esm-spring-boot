@@ -16,6 +16,8 @@ import java.util.Optional;
 
      void deleteById(long id) throws TagNotFoundException;
 
-     void save(String tagName) throws TagIsExistException;
+     Tag save(String tagName) throws TagIsExistException;
+     List<Tag> saveAll(List<Tag> tags);
+     List<Tag> getTagsByTagName(List<String> tags);
 
 }
