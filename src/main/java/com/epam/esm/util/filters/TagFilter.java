@@ -1,7 +1,6 @@
 package com.epam.esm.util.filters;
 
 import com.epam.esm.entities.Tag;
-import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ public class TagFilter {
         if(isEmpty(names))
             return new ArrayList<>();
         return tags.stream()
-                .filter(tag -> names.contains(tag.getName()))F
+                .filter(tag -> names.contains(tag.getName()))
                 .toList();
     }
 
