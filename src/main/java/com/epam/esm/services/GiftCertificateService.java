@@ -91,11 +91,11 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         Optional<GiftCertificate> gCert = getById(giftCertificatePojo.getId());
         if (gCert.isPresent()) {
             var newGCert = giftCertificateMapper.createUpdatedGCertBySaveRequestPojoAndGCert(giftCertificatePojo, gCert.get());
-            List<Tag> tags = tagService.saveAll(giftCertificatePojo.getTags()
-                    .stream()
-                    .map(Tag::new)
-                    .toList());
-            newGCert.setTags(tags);
+            var tagsName = giftCertificatePojo.getTags();
+            if(tagsName != null) {
+                List<Tag> tags = tagService.getTagsByTagName(tagsName);
+                newGCert.setTags(tags);
+            }
             giftCertificateDao.save(newGCert);
         }
     }

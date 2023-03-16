@@ -45,6 +45,7 @@ public class GiftCertificateController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<?> update(@PathVariable long id, @RequestBody GiftCertificateSaveRequestPojo giftCert) throws GiftCertificateNotFoundException, BadRequestException {
         if(!(giftCert != null && (giftCert.getId() == 0 || id == giftCert.getId()))){
             throw new BadRequestException();
