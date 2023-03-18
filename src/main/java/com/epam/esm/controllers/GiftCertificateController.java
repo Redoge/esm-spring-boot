@@ -8,10 +8,17 @@ import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import jakarta.transaction.Transactional;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/certificates")
@@ -21,14 +28,30 @@ public class GiftCertificateController {
         this.giftCertificateService = gCertService;
     }
     @GetMapping
-    public ResponseEntity<List<GiftCertificate>> getGiftCertificates(@ModelAttribute GiftCertificateSearchRequestPojo req) {
-        return ResponseEntity.ok(giftCertificateService.getByGiftCertificateSearchRequestPojo(req));
+    public CollectionModel<EntityModel<GiftCertificate>> getGiftCertificates(@ModelAttribute GiftCertificateSearchRequestPojo req) throws GiftCertificateNotFoundException, BadRequestException, GiftCertificateIsExistException {
+        var gCerts = giftCertificateService.getByGiftCertificateSearchRequestPojo(req);
+        List<EntityModel<GiftCertificate>> gCertsResources = new ArrayList<>();
+        for(var gCert : gCerts) {
+            EntityModel<GiftCertificate> gCertsResource = EntityModel.of(gCert);
+            gCertsResource.add(linkTo(methodOn(GiftCertificateController.class).getGiftCertificatesById(gCert.getId())).withSelfRel());
+            gCertsResource.add(linkTo(methodOn(GiftCertificateController.class).update(gCert.getId(), null)).withRel("update").withType(HttpMethod.PUT.name()));
+            gCertsResource.add(linkTo(methodOn(GiftCertificateController.class).removeGiftCertificateById(gCert.getId())).withRel("delete").withType(HttpMethod.DELETE.name()));
+            gCertsResources.add(gCertsResource);
+        }
+        CollectionModel<EntityModel<GiftCertificate>> resources = CollectionModel.of(gCertsResources);
+        resources.add(linkTo(methodOn(GiftCertificateController.class).getGiftCertificates(null)).withSelfRel());
+        resources.add(linkTo(methodOn(GiftCertificateController.class).create(null)).withRel("create").withType(HttpMethod.POST.name()));
+        return resources;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getGiftCertificatesById(@PathVariable long id) throws GiftCertificateNotFoundException {
-        var cert = giftCertificateService.getById(id);
-        return ResponseEntity.ok(cert);
+    public EntityModel<GiftCertificate> getGiftCertificatesById(@PathVariable long id) throws GiftCertificateNotFoundException, BadRequestException {
+        var gCert = giftCertificateService.getById(id).get();
+        EntityModel<GiftCertificate> gCertsResource = EntityModel.of(gCert);
+        gCertsResource.add(linkTo(methodOn(GiftCertificateController.class).getGiftCertificatesById(gCert.getId())).withSelfRel());
+        gCertsResource.add(linkTo(methodOn(GiftCertificateController.class).update(gCert.getId(), null)).withRel("update").withType(HttpMethod.PUT.name()));
+        gCertsResource.add(linkTo(methodOn(GiftCertificateController.class).removeGiftCertificateById(gCert.getId())).withRel("delete").withType(HttpMethod.DELETE.name()));
+        return gCertsResource;
     }
 
     @DeleteMapping("/{id}")
