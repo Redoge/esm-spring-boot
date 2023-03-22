@@ -3,10 +3,11 @@ package com.epam.esm.services;
 import com.epam.esm.entities.User;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.UserServiceInterface;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+@Service
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
 
@@ -26,6 +27,6 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public User save(User user) {
-        return userRepository.save(user);
+        return userRepository.save(user);//TODO: validate user
     }
 }
