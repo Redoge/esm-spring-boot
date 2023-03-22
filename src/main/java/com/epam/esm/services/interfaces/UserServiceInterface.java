@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserServiceInterface {
-    List<User> getUsers();
-    Optional<User> getById();
+    List<User> getAll();
+    Optional<User> getById(long id);
     User save(User user);
 }

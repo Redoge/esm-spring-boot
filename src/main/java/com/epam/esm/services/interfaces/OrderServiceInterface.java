@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderServiceInterface {
-    List<Order> getUsers();
+    List<Order> getAll();
     Optional<Order> getById();
     List<Order> getByUserId(long userId);
     Order save(Order order);
