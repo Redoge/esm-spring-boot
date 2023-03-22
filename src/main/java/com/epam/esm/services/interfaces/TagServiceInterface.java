@@ -19,5 +19,6 @@ import java.util.Optional;
      Tag save(String tagName) throws TagIsExistException;
      List<Tag> saveAll(List<Tag> tags);
      List<Tag> getTagsByTagName(List<String> tags);
-
+     List<Tag> getByUserId(long userId);
+     Optional<Tag> getMostWidelyByUserId(long userId);
 }
