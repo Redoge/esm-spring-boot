@@ -7,10 +7,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@RequestMapping("/api/orders")
 public class OrderController {
     private final OrderService orderService;
     private final HateoasMapperInterface<Order> hateoasMapper;
