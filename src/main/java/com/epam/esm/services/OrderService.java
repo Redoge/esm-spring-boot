@@ -27,7 +27,7 @@ public class OrderService implements OrderServiceInterface {
 
     @Override
     public Optional<Order> getById(long id) {
-        return orderRepository.findById(id);
+        return orderRepository.findById(id); //TODO: check is exist
     }
 
     @Override
@@ -42,5 +42,9 @@ public class OrderService implements OrderServiceInterface {
     @Override
     public Order save(Order order) {
         return orderRepository.save(order);//TODO: validate order
+    }
+
+    public void deleteById(Long id){
+        orderRepository.deleteById(id);//TODO: check is exists
     }
 }
