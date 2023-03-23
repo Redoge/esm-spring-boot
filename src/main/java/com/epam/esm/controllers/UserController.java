@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+public class UserController{
     private final UserServiceInterface userService;
     private final TagServiceInterface tagService;
     private final HateoasMapperInterface<Tag> tagHateoasMapper;
@@ -24,7 +24,11 @@ public class UserController {
     private final GiftCertificateServiceInterface giftCertificateService;
     private final HateoasMapperInterface<User> hateoasMapper;
 
-    public UserController(UserService userService, TagServiceInterface tagService, HateoasMapperInterface<Tag> tagHateoasMapper, HateoasMapperInterface<GiftCertificate> gCertHateoasMapper, GiftCertificateServiceInterface giftCertificateService, HateoasMapperInterface<User> hateoasMapper) {
+    public UserController(UserService userService, TagServiceInterface tagService,
+                          HateoasMapperInterface<Tag> tagHateoasMapper,
+                          HateoasMapperInterface<GiftCertificate> gCertHateoasMapper,
+                          GiftCertificateServiceInterface giftCertificateService,
+                          HateoasMapperInterface<User> hateoasMapper) {
         this.userService = userService;
         this.tagService = tagService;
         this.tagHateoasMapper = tagHateoasMapper;
