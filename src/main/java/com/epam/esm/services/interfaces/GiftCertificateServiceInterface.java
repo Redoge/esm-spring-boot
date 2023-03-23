@@ -25,4 +25,7 @@ public interface GiftCertificateServiceInterface {
     void update(GiftCertificateSaveRequestPojo giftCertificatePojo) throws GiftCertificateNotFoundException;
 
     List<GiftCertificate> getByGiftCertificateSearchRequestPojo(GiftCertificateSearchRequestPojo certsSearchReqPojo);
+
+    List<GiftCertificate> getByUserId(Long id);
+
 }

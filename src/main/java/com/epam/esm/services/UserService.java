@@ -29,4 +29,9 @@ public class UserService implements UserServiceInterface {
     public User save(User user) {
         return userRepository.save(user);//TODO: validate user
     }
+
+    @Override
+    public void deleteById(long id) {//TODO: check exist
+        userRepository.findById(id);
+    }
 }

@@ -1,6 +1,7 @@
 package com.epam.esm.services;
 
 import com.epam.esm.entities.GiftCertificate;
+import com.epam.esm.entities.Order;
 import com.epam.esm.entities.Tag;
 import com.epam.esm.exceptions.BadRequestException;
 import com.epam.esm.exceptions.GiftCertificateIsExistException;
@@ -8,6 +9,7 @@ import com.epam.esm.exceptions.GiftCertificateNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.repositories.GiftCertificateRepository;
+import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.GiftCertificateMapper;
 import com.epam.esm.util.sorters.GiftCertificateSorter;
@@ -27,14 +29,16 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     private final GiftCertificateSorter giftCertificateSorter;
     private final GiftCertificateMapper giftCertificateMapper;
     private final GiftCertificateValidator giftCertificateValidator;
+    private final OrderRepository orderRepository;
     private final TagService tagService;
 
     public GiftCertificateService(GiftCertificateRepository giftCertificateDao, GiftCertificateSorter giftCertificateSorter,
-                                  GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator, TagService tagService) {
+                                  GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator, OrderRepository orderRepository, TagService tagService) {
         this.giftCertificateDao = giftCertificateDao;
         this.giftCertificateSorter = giftCertificateSorter;
         this.giftCertificateMapper = giftCertificateMapper;
         this.giftCertificateValidator = giftCertificateValidator;
+        this.orderRepository = orderRepository;
         this.tagService = tagService;
 
     }
@@ -103,6 +107,15 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     public List<GiftCertificate> getByGiftCertificateSearchRequestPojo(GiftCertificateSearchRequestPojo certsSearchReqPojo) {
         List<GiftCertificate> gCerts = getGiftCertificateMainDtoBySearchReq(certsSearchReqPojo);
         return giftCertificateSorter.sortedGiftCertificateMainDtoBySearchReq(gCerts, certsSearchReqPojo);
+    }
+
+    @Override
+    public List<GiftCertificate> getByUserId(Long id) {
+        return orderRepository.findAllByOwnerId(id)
+                .stream()
+                .map(Order::getGiftCertificate)
+                .distinct()
+                .toList();
     }
 
     private List<GiftCertificate> getGiftCertificateMainDtoBySearchReq(GiftCertificateSearchRequestPojo certsSearchReqPojo) {

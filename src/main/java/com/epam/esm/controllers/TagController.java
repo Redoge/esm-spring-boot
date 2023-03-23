@@ -25,14 +25,14 @@ public class TagController{
     }
     @GetMapping
     public CollectionModel<EntityModel<Tag>>getAll() throws Exception {
-        List<Tag> tags = tagService.getAll();
+       List<Tag> tags = tagService.getAll();
        return hateoasMapper.getCollectionModel(tags);
     }
 
     @GetMapping("/{id}")
     public EntityModel<Tag> getById(@PathVariable long id) throws Exception {
-        var tag = tagService.getById(id);
-        return hateoasMapper.getEntityModel(tag.get());
+        var user = tagService.getById(id);
+        return hateoasMapper.getEntityModel(user.get());
     }
 
     @DeleteMapping("/{id}")
