@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +31,7 @@ public class User {
     private BigDecimal money;
     @Column(name = "user_role")
     private UserRole role;
-    @OneToMany
+    @OneToMany(mappedBy = "owner")
     private List<Order> orders;
     @OneToMany
     private List<GiftCertificate> giftCertificates;
