@@ -1,10 +1,13 @@
 package com.epam.esm.services;
 
 import com.epam.esm.entities.User;
+import com.epam.esm.exceptions.BadRequestException;
 import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
+import com.epam.esm.pojo.UserSaveRequestPojo;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.UserServiceInterface;
+import com.epam.esm.util.mappers.UserMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +15,11 @@ import java.util.Optional;
 @Service
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -43,6 +48,14 @@ public class UserService implements UserServiceInterface {
         if (!userRepository.existsById(id)) {
             throw new ObjectNotFoundException("User", id);
         }
-        userRepository.findById(id);
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public User save(UserSaveRequestPojo userPojo) throws BadRequestException, ObjectIsExistException {
+        var user = userMapper.mapUserPojoToUSer(userPojo);
+        if(userRepository.existsByUsername(user.getUsername()))
+            throw new ObjectIsExistException("User", user.getUsername());
+        return userRepository.save(user);
     }
 }

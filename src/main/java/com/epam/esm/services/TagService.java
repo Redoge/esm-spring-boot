@@ -6,6 +6,7 @@ import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.repositories.TagRepository;
+import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.util.filters.TagFilter;
 import jakarta.transaction.Transactional;
@@ -24,11 +25,13 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 public class TagService implements TagServiceInterface {
     private final TagRepository tagDao;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     private final TagFilter tagFilter;
 
-    public TagService(TagRepository tagDao, OrderRepository orderRepository, TagFilter tagFilter) {
+    public TagService(TagRepository tagDao, OrderRepository orderRepository, UserRepository userRepository, TagFilter tagFilter) {
         this.tagDao = tagDao;
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
         this.tagFilter = tagFilter;
     }
 
@@ -84,7 +87,10 @@ public class TagService implements TagServiceInterface {
     }
 
     @Override
-    public List<Tag> getByUserId(long userId) {
+    public List<Tag> getByUserId(long userId) throws ObjectNotFoundException {
+        if(!userRepository.existsById(userId)){
+            throw new ObjectNotFoundException("User", userId);
+        }
         return orderRepository.findAllByOwnerId(userId).stream()
                 .flatMap(order -> order.getGiftCertificate().getTags().stream())
                 .distinct()
@@ -93,6 +99,9 @@ public class TagService implements TagServiceInterface {
 
     @Override
     public Optional<Tag> getMostWidelyByUserId(long userId) throws ObjectNotFoundException {
+        if(!userRepository.existsById(userId)){
+            throw new ObjectNotFoundException("User", userId);
+        }
         var tags =  orderRepository.findAllByOwnerId(userId).stream()
                 .flatMap(order -> order.getGiftCertificate().getTags().stream())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))

@@ -20,6 +20,6 @@ import java.util.Optional;
      Tag save(String tagName) throws  ObjectIsExistException;
      List<Tag> saveAll(List<Tag> tags);
      List<Tag> getTagsByTagName(List<String> tags);
-     List<Tag> getByUserId(long userId);
+     List<Tag> getByUserId(long userId) throws ObjectNotFoundException;
      Optional<Tag> getMostWidelyByUserId(long userId) throws ObjectNotFoundException;
 }

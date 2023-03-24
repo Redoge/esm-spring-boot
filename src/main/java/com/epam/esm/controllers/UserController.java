@@ -3,8 +3,10 @@ package com.epam.esm.controllers;
 import com.epam.esm.entities.GiftCertificate;
 import com.epam.esm.entities.Tag;
 import com.epam.esm.entities.User;
+import com.epam.esm.exceptions.BadRequestException;
 import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
+import com.epam.esm.pojo.UserSaveRequestPojo;
 import com.epam.esm.services.UserService;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.services.interfaces.TagServiceInterface;
@@ -58,8 +60,8 @@ public class UserController{
 
     @PostMapping
     @Transactional
-    public ResponseEntity<User> create(@RequestBody User user) throws ObjectIsExistException {
-        var createdUser = userService.save(user);
+    public ResponseEntity<User> create(@RequestBody UserSaveRequestPojo userPojo) throws ObjectIsExistException, BadRequestException {
+        var createdUser = userService.save(userPojo);
         return ResponseEntity.ok(createdUser);
     }
 
