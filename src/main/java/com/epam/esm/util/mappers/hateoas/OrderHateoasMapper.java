@@ -3,6 +3,7 @@ package com.epam.esm.util.mappers.hateoas;
 import com.epam.esm.controllers.OrderController;
 import com.epam.esm.controllers.TagController;
 import com.epam.esm.entities.Order;
+import com.epam.esm.pojo.OrderSaveRequestPojo;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -32,7 +33,7 @@ public class OrderHateoasMapper implements HateoasMapperInterface<Order> {
         }
         CollectionModel<EntityModel<Order>> resources = CollectionModel.of(orderResources);
         resources.add(linkTo(methodOn(OrderController.class).getAll()).withSelfRel());
-        resources.add(linkTo(methodOn(OrderController.class).create(null)).withRel("create").withType(HttpMethod.POST.name()));
+        resources.add(linkTo(methodOn(OrderController.class).create(new OrderSaveRequestPojo())).withRel("create").withType(HttpMethod.POST.name()));
         return  resources;
     }
 }
