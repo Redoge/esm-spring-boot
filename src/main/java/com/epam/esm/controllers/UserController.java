@@ -3,6 +3,8 @@ package com.epam.esm.controllers;
 import com.epam.esm.entities.GiftCertificate;
 import com.epam.esm.entities.Tag;
 import com.epam.esm.entities.User;
+import com.epam.esm.exceptions.ObjectIsExistException;
+import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.services.UserService;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.services.interfaces.TagServiceInterface;
@@ -49,14 +51,14 @@ public class UserController{
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> removeById(@PathVariable long id){
+    public ResponseEntity<?> removeById(@PathVariable long id) throws ObjectNotFoundException {
         userService.deleteById(id);
         return ResponseEntity.ok("Deleted successfully!");
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<User> create(@RequestBody User user)  {
+    public ResponseEntity<User> create(@RequestBody User user) throws ObjectIsExistException {
         var createdUser = userService.save(user);
         return ResponseEntity.ok(createdUser);
     }

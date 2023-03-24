@@ -21,5 +21,5 @@ import java.util.Optional;
      List<Tag> saveAll(List<Tag> tags);
      List<Tag> getTagsByTagName(List<String> tags);
      List<Tag> getByUserId(long userId);
-     Optional<Tag> getMostWidelyByUserId(long userId);
+     Optional<Tag> getMostWidelyByUserId(long userId) throws ObjectNotFoundException;
 }

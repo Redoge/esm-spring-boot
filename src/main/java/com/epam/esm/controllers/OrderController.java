@@ -1,6 +1,7 @@
 package com.epam.esm.controllers;
 
 import com.epam.esm.entities.Order;
+import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.services.OrderService;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
@@ -31,7 +32,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> removeById(@PathVariable long id){
+    public ResponseEntity<?> removeById(@PathVariable long id) throws ObjectNotFoundException {
         orderService.deleteById(id);
         return ResponseEntity.ok("Deleted successfully!");
     }

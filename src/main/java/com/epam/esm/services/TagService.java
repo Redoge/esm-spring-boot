@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 @Service
 public class TagService implements TagServiceInterface {
     private final TagRepository tagDao;
@@ -90,14 +92,16 @@ public class TagService implements TagServiceInterface {
     }
 
     @Override
-    public Optional<Tag> getMostWidelyByUserId(long userId) {
+    public Optional<Tag> getMostWidelyByUserId(long userId) throws ObjectNotFoundException {
         var tags =  orderRepository.findAllByOwnerId(userId).stream()
                 .flatMap(order -> order.getGiftCertificate().getTags().stream())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .get().getKey();
-        return Optional.ofNullable(tags);
+                .max(Map.Entry.comparingByValue());
+        if (tags.isPresent()) {
+            return Optional.ofNullable(tags.get().getKey());
+        }
+        throw new ObjectNotFoundException("Tag", "null");
     }
 
 
