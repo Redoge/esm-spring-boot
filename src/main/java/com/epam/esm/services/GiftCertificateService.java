@@ -10,6 +10,7 @@ import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.repositories.GiftCertificateRepository;
 import com.epam.esm.repositories.OrderRepository;
+import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.GiftCertificateMapper;
 import com.epam.esm.util.sorters.GiftCertificateSorter;
@@ -31,9 +32,10 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     private final GiftCertificateValidator giftCertificateValidator;
     private final OrderRepository orderRepository;
     private final TagService tagService;
+    private final UserRepository userRepository;
 
     public GiftCertificateService(GiftCertificateRepository giftCertificateDao, GiftCertificateSorter giftCertificateSorter,
-                                  GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator, OrderRepository orderRepository, TagService tagService) {
+                                  GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator, OrderRepository orderRepository, TagService tagService, UserRepository userRepository) {
         this.giftCertificateDao = giftCertificateDao;
         this.giftCertificateSorter = giftCertificateSorter;
         this.giftCertificateMapper = giftCertificateMapper;
@@ -41,6 +43,7 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         this.orderRepository = orderRepository;
         this.tagService = tagService;
 
+        this.userRepository = userRepository;
     }
 
     public List<GiftCertificate> getAll() {
@@ -110,7 +113,10 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     }
 
     @Override
-    public List<GiftCertificate> getByUserId(Long id) {
+    public List<GiftCertificate> getByUserId(Long id) throws ObjectNotFoundException {
+        if(!userRepository.existsById(id))
+            throw new ObjectNotFoundException("User", id);
+
         return orderRepository.findAllByOwnerId(id)
                 .stream()
                 .map(Order::getGiftCertificate)

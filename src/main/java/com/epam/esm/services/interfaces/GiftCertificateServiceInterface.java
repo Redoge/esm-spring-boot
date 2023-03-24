@@ -26,6 +26,6 @@ public interface GiftCertificateServiceInterface {
 
     List<GiftCertificate> getByGiftCertificateSearchRequestPojo(GiftCertificateSearchRequestPojo certsSearchReqPojo);
 
-    List<GiftCertificate> getByUserId(Long id);
+    List<GiftCertificate> getByUserId(Long id) throws ObjectNotFoundException;
 
 }
