@@ -1,6 +1,8 @@
 package com.epam.esm.services;
 
 import com.epam.esm.entities.User;
+import com.epam.esm.exceptions.ObjectIsExistException;
+import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.UserServiceInterface;
 import org.springframework.stereotype.Service;
@@ -21,17 +23,26 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-    public Optional<User> getById(long id) {
-        return userRepository.findById(id);
+    public Optional<User> getById(long id) throws ObjectNotFoundException {
+        var user = userRepository.findById(id);
+        if(user.isEmpty())
+            throw new ObjectNotFoundException("User", id);
+        return user;
     }
 
     @Override
-    public User save(User user) {
+    public User save(User user) throws ObjectIsExistException {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new ObjectIsExistException("User", user.getUsername());
+        }
         return userRepository.save(user);//TODO: validate user
     }
 
     @Override
-    public void deleteById(long id) {//TODO: check exist
+    public void deleteById(long id) throws ObjectNotFoundException {
+        if (userRepository.existsById(id)) {
+            throw new ObjectNotFoundException("User", id);
+        }
         userRepository.findById(id);
     }
 }
