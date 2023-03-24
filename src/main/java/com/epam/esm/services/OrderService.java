@@ -1,12 +1,12 @@
 package com.epam.esm.services;
 
 import com.epam.esm.entities.Order;
+import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.OrderServiceInterface;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,17 +26,19 @@ public class OrderService implements OrderServiceInterface {
     }
 
     @Override
-    public Optional<Order> getById(long id) {
-        return orderRepository.findById(id); //TODO: check is exist
+    public Optional<Order> getById(long id) throws ObjectNotFoundException {
+        var order = orderRepository.findById(id);
+        if(order.isEmpty())
+            throw new ObjectNotFoundException("Order", id);
+        return order;
     }
 
     @Override
-    public List<Order> getByUserId(long userId) {
+    public List<Order> getByUserId(long userId) throws ObjectNotFoundException {
         var user = userRepository.findById(userId);
-        if(user.isPresent()){
-            return user.get().getOrders();
-        }
-        return new ArrayList<>();
+        if(user.isEmpty())
+            throw new ObjectNotFoundException("User", userId);
+        return user.get().getOrders();
     }
 
     @Override
@@ -44,7 +46,10 @@ public class OrderService implements OrderServiceInterface {
         return orderRepository.save(order);//TODO: validate order
     }
 
-    public void deleteById(Long id){
-        orderRepository.deleteById(id);//TODO: check is exists
+    public void deleteById(Long id) throws ObjectNotFoundException {
+        if (!orderRepository.existsById(id)) {
+            throw new ObjectNotFoundException("Order", id);
+        }
+        orderRepository.deleteById(id);
     }
 }

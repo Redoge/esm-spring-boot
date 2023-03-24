@@ -40,7 +40,7 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public void deleteById(long id) throws ObjectNotFoundException {
-        if (userRepository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new ObjectNotFoundException("User", id);
         }
         userRepository.findById(id);
