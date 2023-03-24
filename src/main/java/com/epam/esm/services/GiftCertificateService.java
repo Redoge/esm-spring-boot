@@ -4,8 +4,8 @@ import com.epam.esm.entities.GiftCertificate;
 import com.epam.esm.entities.Order;
 import com.epam.esm.entities.Tag;
 import com.epam.esm.exceptions.BadRequestException;
-import com.epam.esm.exceptions.GiftCertificateIsExistException;
-import com.epam.esm.exceptions.GiftCertificateNotFoundException;
+import com.epam.esm.exceptions.ObjectIsExistException;
+import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.repositories.GiftCertificateRepository;
@@ -47,31 +47,31 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         return giftCertificateDao.findAll();
     }
 
-    public Optional<GiftCertificate> getById(long id) throws GiftCertificateNotFoundException {
+    public Optional<GiftCertificate> getById(long id) throws ObjectNotFoundException {
         var gCerts = giftCertificateDao.findById(id);
         if (gCerts.isEmpty()) {
-            throw new GiftCertificateNotFoundException("id " + id);
+            throw new ObjectNotFoundException("Gift Certificate", id);
         }
         return gCerts;
     }
 
-    public Optional<GiftCertificate> getByName(String name) throws GiftCertificateNotFoundException {
+    public Optional<GiftCertificate> getByName(String name) throws ObjectNotFoundException {
         var gCerts = giftCertificateDao.findByName(name);
         if (gCerts.isEmpty()) {
-            throw new GiftCertificateNotFoundException("name " + name);
+            throw new ObjectNotFoundException("Gift Certificate", name);
         }
         return gCerts;
     }
     @Transactional
-    public void deleteById(long id) throws GiftCertificateNotFoundException {
+    public void deleteById(long id) throws ObjectNotFoundException {
         if (!giftCertificateDao.existsById(id)) {
-            throw new GiftCertificateNotFoundException("id " + id);
+            throw new ObjectNotFoundException("Gift Certificate", id);
         }
         giftCertificateDao.deleteById(id);
     }
 
     @Transactional
-    public GiftCertificate save(GiftCertificate giftCertificate) throws GiftCertificateIsExistException, BadRequestException {
+    public GiftCertificate save(GiftCertificate giftCertificate) throws BadRequestException, ObjectIsExistException {
         giftCertificate.setCreateDate(LocalDateTime.now());
         giftCertificate.setLastUpdateDate(LocalDateTime.now());
         var valid = giftCertificateValidator.isValid(giftCertificate);
@@ -79,19 +79,19 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
             throw new BadRequestException();
         }
         if (giftCertificateDao.existsByName(giftCertificate.getName())) {
-            throw new GiftCertificateIsExistException("name " + giftCertificate.getName());
+            throw new ObjectIsExistException("Gift Certificate", giftCertificate.getName());
         }
         return giftCertificateDao.save(giftCertificate);
     }
     @Transactional
-    public GiftCertificate save(GiftCertificateSaveRequestPojo giftCertificate) throws GiftCertificateIsExistException, BadRequestException {
+    public GiftCertificate save(GiftCertificateSaveRequestPojo giftCertificate) throws BadRequestException, ObjectIsExistException {
         var tags = tagService.getTagsByTagName(giftCertificate.getTags());
         var gCertBySaveRequestPojoAndGCert = giftCertificateMapper.createGCertBySaveRequestPojoAndGCert(giftCertificate, tags);
         return save(gCertBySaveRequestPojoAndGCert);
     }
 
     @Transactional
-    public void update(GiftCertificateSaveRequestPojo giftCertificatePojo) throws GiftCertificateNotFoundException {
+    public void update(GiftCertificateSaveRequestPojo giftCertificatePojo) throws ObjectNotFoundException {
         Optional<GiftCertificate> gCert = getById(giftCertificatePojo.getId());
         if (gCert.isPresent()) {
             var newGCert = giftCertificateMapper.createUpdatedGCertBySaveRequestPojoAndGCert(giftCertificatePojo, gCert.get());

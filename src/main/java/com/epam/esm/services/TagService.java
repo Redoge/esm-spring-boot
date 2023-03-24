@@ -1,8 +1,9 @@
 package com.epam.esm.services;
 
 import com.epam.esm.entities.Tag;
-import com.epam.esm.exceptions.TagIsExistException;
-import com.epam.esm.exceptions.TagNotFoundException;
+
+import com.epam.esm.exceptions.ObjectIsExistException;
+import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.repositories.TagRepository;
 import com.epam.esm.services.interfaces.TagServiceInterface;
@@ -33,32 +34,32 @@ public class TagService implements TagServiceInterface {
         return tagDao.findAll();
     }
 
-    public Optional<Tag> getById(long id) throws TagNotFoundException {
+    public Optional<Tag> getById(long id) throws ObjectNotFoundException {
         Optional<Tag> tag = tagDao.findById(id);
         if (tag.isEmpty())
-            throw new TagNotFoundException("id " + id);
+            throw new ObjectNotFoundException("Tag", id);
         return tag;
     }
 
-    public Optional<Tag> getByName(String name) throws TagNotFoundException {
+    public Optional<Tag> getByName(String name) throws ObjectNotFoundException {
         Optional<Tag> tag = tagDao.findByName(name);
         if (tag.isEmpty())
-            throw new TagNotFoundException("name " + name);
+            throw new ObjectNotFoundException("Tag", name);
         return tag;
     }
 
     @Transactional
-    public void deleteById(long id) throws TagNotFoundException {
+    public void deleteById(long id) throws ObjectNotFoundException {
         if (!tagDao.existsById(id)) {
-            throw new TagNotFoundException("id " + id);
+            throw new ObjectNotFoundException("Tag", id);
         }
         tagDao.deleteById(id);
     }
 
     @Transactional
-    public Tag save(String tagName) throws TagIsExistException {
+    public Tag save(String tagName) throws ObjectIsExistException {
         if (tagDao.existsByName(tagName)) {
-            throw new TagIsExistException("name " + tagName);
+            throw new ObjectIsExistException("Tag", tagName);
         }
         return tagDao.save(new Tag(tagName));
     }

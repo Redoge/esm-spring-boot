@@ -2,8 +2,8 @@ package com.epam.esm.controllers;
 
 import com.epam.esm.entities.GiftCertificate;
 import com.epam.esm.exceptions.BadRequestException;
-import com.epam.esm.exceptions.GiftCertificateIsExistException;
-import com.epam.esm.exceptions.GiftCertificateNotFoundException;
+import com.epam.esm.exceptions.ObjectIsExistException;
+import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
@@ -37,21 +37,21 @@ public class GiftCertificateController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> removeById(@PathVariable long id) throws GiftCertificateNotFoundException {
+    public ResponseEntity<?> removeById(@PathVariable long id) throws ObjectNotFoundException {
         giftCertificateService.deleteById(id);
         return ResponseEntity.ok("Deleted successfully!");
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<?> create(@RequestBody GiftCertificateSaveRequestPojo giftCertPojo) throws GiftCertificateIsExistException, BadRequestException {
+    public ResponseEntity<?> create(@RequestBody GiftCertificateSaveRequestPojo giftCertPojo) throws BadRequestException, ObjectIsExistException {
         var giftCertificate  = giftCertificateService.save(giftCertPojo);
         return ResponseEntity.ok(giftCertificate);
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> update(@PathVariable long id, @RequestBody GiftCertificateSaveRequestPojo giftCert) throws GiftCertificateNotFoundException, BadRequestException {
+    public ResponseEntity<?> update(@PathVariable long id, @RequestBody GiftCertificateSaveRequestPojo giftCert) throws BadRequestException, ObjectNotFoundException {
         if(!(giftCert != null && (giftCert.getId() == 0 || id == giftCert.getId()))){
             throw new BadRequestException();
         }
