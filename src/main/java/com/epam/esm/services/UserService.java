@@ -58,4 +58,6 @@ public class UserService implements UserServiceInterface {
             throw new ObjectIsExistException("User", user.getUsername());
         return userRepository.save(user);
     }
+
+    
 }

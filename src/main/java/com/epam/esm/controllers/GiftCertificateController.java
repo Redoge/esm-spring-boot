@@ -7,10 +7,10 @@ import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
+import com.epam.esm.util.mappers.hateoas.models.GiftCertificateRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,21 +19,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/certificates")
 public class GiftCertificateController {
     private final GiftCertificateServiceInterface giftCertificateService;
-    private final HateoasMapperInterface<GiftCertificate> hateoasMapper;
-    public GiftCertificateController(GiftCertificateServiceInterface gCertService, HateoasMapperInterface<GiftCertificate> hateoasMapper) {
+    private final HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> hateoasMapper;
+    public GiftCertificateController(GiftCertificateServiceInterface gCertService, HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> hateoasMapper) {
         this.giftCertificateService = gCertService;
         this.hateoasMapper = hateoasMapper;
     }
     @GetMapping
-    public CollectionModel<EntityModel<GiftCertificate>> getAll(@ModelAttribute GiftCertificateSearchRequestPojo req) throws Exception {
+    public CollectionModel<GiftCertificateRepresentationModel> getAll(@ModelAttribute GiftCertificateSearchRequestPojo req) throws Exception {
         var gCerts = giftCertificateService.getByGiftCertificateSearchRequestPojo(req);
         return hateoasMapper.getCollectionModel(gCerts);
     }
 
     @GetMapping("/{id}")
-    public EntityModel<GiftCertificate> getById(@PathVariable long id) throws Exception {
+    public GiftCertificateRepresentationModel getById(@PathVariable long id) throws Exception {
         var gCert = giftCertificateService.getById(id).get();
-        return hateoasMapper.getEntityModel(gCert);
+        return hateoasMapper.getRepresentationModel(gCert);
     }
 
     @DeleteMapping("/{id}")

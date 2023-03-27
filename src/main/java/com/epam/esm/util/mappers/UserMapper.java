@@ -21,7 +21,6 @@ public class UserMapper {
         user.setPassword(userPojo.getPassword());
         user.setMoney(BigDecimal.valueOf(0));
         user.setRole(UserRole.USER);
-        user.setGiftCertificates(new ArrayList<>());
         user.setOrders(new ArrayList<>());
         return user;
     }

@@ -1,55 +1,64 @@
 package com.epam.esm.controllers;
 
 import com.epam.esm.entities.GiftCertificate;
+import com.epam.esm.entities.Order;
 import com.epam.esm.entities.Tag;
 import com.epam.esm.entities.User;
 import com.epam.esm.exceptions.BadRequestException;
 import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.UserSaveRequestPojo;
+import com.epam.esm.services.OrderService;
 import com.epam.esm.services.UserService;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.services.interfaces.UserServiceInterface;
+import com.epam.esm.util.mappers.hateoas.UserHateoasMapper;
+import com.epam.esm.util.mappers.hateoas.models.GiftCertificateRepresentationModel;
+import com.epam.esm.util.mappers.hateoas.models.TagRepresentationModel;
+import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController{
     private final UserServiceInterface userService;
     private final TagServiceInterface tagService;
-    private final HateoasMapperInterface<Tag> tagHateoasMapper;
-    private final HateoasMapperInterface<GiftCertificate> gCertHateoasMapper;
+    private final HateoasMapperInterface<TagRepresentationModel, Tag> tagHateoasMapper;
+    private final HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> gCertHateoasMapper;
     private final GiftCertificateServiceInterface giftCertificateService;
-    private final HateoasMapperInterface<User> hateoasMapper;
+    private final UserHateoasMapper hateoasMapper;
+    private final OrderService orderService;
 
     public UserController(UserService userService, TagServiceInterface tagService,
-                          HateoasMapperInterface<Tag> tagHateoasMapper,
-                          HateoasMapperInterface<GiftCertificate> gCertHateoasMapper,
+                          HateoasMapperInterface<TagRepresentationModel, Tag> tagHateoasMapper,
+                          HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> gCertHateoasMapper,
                           GiftCertificateServiceInterface giftCertificateService,
-                          HateoasMapperInterface<User> hateoasMapper) {
+                          UserHateoasMapper hateoasMapper, OrderService orderService) {
         this.userService = userService;
         this.tagService = tagService;
         this.tagHateoasMapper = tagHateoasMapper;
         this.gCertHateoasMapper = gCertHateoasMapper;
         this.giftCertificateService = giftCertificateService;
         this.hateoasMapper = hateoasMapper;
+        this.orderService = orderService;
     }
 
     @GetMapping
-    public CollectionModel<EntityModel<User>> getAll() throws Exception {
+    public CollectionModel<UserRepresentationModel> getAll() throws Exception {
         var users = userService.getAll();
         return hateoasMapper.getCollectionModel(users);
     }
     @GetMapping("/{id}")
-    public EntityModel<User> getById(@PathVariable long id) throws Exception {
+    public UserRepresentationModel getById(@PathVariable long id) throws Exception {
         var users = userService.getById(id);
-        return hateoasMapper.getEntityModel(users.get());
+        return hateoasMapper.getRepresentationModel(users.get());
     }
 
     @DeleteMapping("/{id}")
@@ -66,19 +75,24 @@ public class UserController{
     }
 
     @GetMapping("/{id}/tags")
-    public CollectionModel<EntityModel<Tag>> getTagsByUserId(@PathVariable Long id) throws Exception {
+    public CollectionModel<TagRepresentationModel> getTagsByUserId(@PathVariable Long id) throws Exception {
         var tags = tagService.getByUserId(id);
         return tagHateoasMapper.getCollectionModel(tags);
     }
     @GetMapping("/{id}/tags/top")
-    public EntityModel<Tag> getTopTagsByUserId(@PathVariable Long id) throws Exception {
+    public TagRepresentationModel getTopTagsByUserId(@PathVariable Long id) throws Exception {
         var tag = tagService.getMostWidelyByUserId(id);
-        return tagHateoasMapper.getEntityModel(tag.get());
+        return tagHateoasMapper.getRepresentationModel(tag.get());
     }
 
     @GetMapping("/{id}/certificates")
-    public CollectionModel<EntityModel<GiftCertificate>> getCertificatesByUserId(@PathVariable Long id) throws Exception {
+    public CollectionModel<GiftCertificateRepresentationModel> getCertificatesByUserId(@PathVariable Long id) throws Exception {
         var tags = giftCertificateService.getByUserId(id);
         return gCertHateoasMapper.getCollectionModel(tags);
+    }
+    @GetMapping("/{id}/orders")
+    public List<Order> getOrdersByUserId(@PathVariable Long id) throws ObjectNotFoundException {//TODO:representation
+        var orders = orderService.getByUserId(id);
+        return orders;
     }
 }

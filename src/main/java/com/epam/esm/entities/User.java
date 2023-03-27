@@ -2,11 +2,13 @@ package com.epam.esm.entities;
 
 import com.epam.esm.util.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "users")
-public class User {
+public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -30,9 +32,9 @@ public class User {
     @Column(name = "user_money")
     private BigDecimal money;
     @Column(name = "user_role")
+    @JsonIgnore
     private UserRole role;
     @OneToMany(mappedBy = "owner")
+    @JsonIgnoreProperties("owner")
     private List<Order> orders;
-    @OneToMany
-    private List<GiftCertificate> giftCertificates;
 }

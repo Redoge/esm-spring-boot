@@ -1,12 +1,11 @@
 package com.epam.esm.util.mappers.hateoas;
 
 import com.epam.esm.controllers.OrderController;
-import com.epam.esm.controllers.TagController;
 import com.epam.esm.entities.Order;
 import com.epam.esm.pojo.OrderSaveRequestPojo;
+import com.epam.esm.util.mappers.hateoas.models.OrderRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
@@ -16,22 +15,19 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
-public class OrderHateoasMapper implements HateoasMapperInterface<Order> {
+public class OrderHateoasMapper implements HateoasMapperInterface<OrderRepresentationModel, Order> {
     @Override
-    public EntityModel<Order> getEntityModel(Order tag) throws Exception {
-        EntityModel<Order> orderResource = EntityModel.of(tag);
-        orderResource.add(linkTo(methodOn(OrderController.class).getById(tag.getId())).withSelfRel());
-        orderResource.add(linkTo(methodOn(OrderController.class).removeById(tag.getId())).withRel("delete").withType(HttpMethod.DELETE.name()));
-        return orderResource;
+    public OrderRepresentationModel getRepresentationModel(Order order) {
+        return new OrderRepresentationModel(order);
     }
 
     @Override
-    public CollectionModel<EntityModel<Order>> getCollectionModel(List<Order> orders) throws Exception {
-        List<EntityModel<Order>> orderResources = new ArrayList<>();
+    public CollectionModel<OrderRepresentationModel> getCollectionModel(List<Order> orders) throws Exception {
+        List<OrderRepresentationModel> orderResources = new ArrayList<>();
         for (var order : orders) {
-            orderResources.add(getEntityModel(order));
+            orderResources.add(getRepresentationModel(order));
         }
-        CollectionModel<EntityModel<Order>> resources = CollectionModel.of(orderResources);
+        CollectionModel<OrderRepresentationModel> resources = CollectionModel.of(orderResources);
         resources.add(linkTo(methodOn(OrderController.class).getAll()).withSelfRel());
         resources.add(linkTo(methodOn(OrderController.class).create(new OrderSaveRequestPojo())).withRel("create").withType(HttpMethod.POST.name()));
         return  resources;

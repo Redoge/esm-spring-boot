@@ -30,17 +30,15 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     private final GiftCertificateSorter giftCertificateSorter;
     private final GiftCertificateMapper giftCertificateMapper;
     private final GiftCertificateValidator giftCertificateValidator;
-    private final OrderRepository orderRepository;
     private final TagService tagService;
     private final UserRepository userRepository;
 
     public GiftCertificateService(GiftCertificateRepository giftCertificateDao, GiftCertificateSorter giftCertificateSorter,
-                                  GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator, OrderRepository orderRepository, TagService tagService, UserRepository userRepository) {
+                                  GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator,  TagService tagService, UserRepository userRepository) {
         this.giftCertificateDao = giftCertificateDao;
         this.giftCertificateSorter = giftCertificateSorter;
         this.giftCertificateMapper = giftCertificateMapper;
         this.giftCertificateValidator = giftCertificateValidator;
-        this.orderRepository = orderRepository;
         this.tagService = tagService;
 
         this.userRepository = userRepository;
@@ -114,10 +112,11 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
 
     @Override
     public List<GiftCertificate> getByUserId(Long id) throws ObjectNotFoundException {
-        if(!userRepository.existsById(id))
+        var user = userRepository.findById(id);
+        if(user.isEmpty())
             throw new ObjectNotFoundException("User", id);
 
-        return orderRepository.findAllByOwnerId(id)
+        return user.get().getOrders()
                 .stream()
                 .map(Order::getGiftCertificate)
                 .distinct()
