@@ -1,13 +1,18 @@
 package com.epam.esm.services;
 
 import com.epam.esm.entities.Tag;
-import com.epam.esm.exceptions.TagIsExistException;
-import com.epam.esm.exceptions.TagNotFoundException;
+
+import com.epam.esm.exceptions.ObjectIsExistException;
+import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.repositories.TagRepository;
+import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.util.filters.TagFilter;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,48 +22,55 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 @Service
 public class TagService implements TagServiceInterface {
     private final TagRepository tagDao;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     private final TagFilter tagFilter;
 
-    public TagService(TagRepository tagDao, OrderRepository orderRepository, TagFilter tagFilter) {
+    public TagService(TagRepository tagDao, OrderRepository orderRepository, UserRepository userRepository, TagFilter tagFilter) {
         this.tagDao = tagDao;
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
         this.tagFilter = tagFilter;
     }
 
+    public Page<Tag> getAll(Pageable pageable) {
+        return tagDao.findAll(pageable);
+    }
     public List<Tag> getAll() {
         return tagDao.findAll();
     }
 
-    public Optional<Tag> getById(long id) throws TagNotFoundException {
+    public Optional<Tag> getById(long id) throws ObjectNotFoundException {
         Optional<Tag> tag = tagDao.findById(id);
         if (tag.isEmpty())
-            throw new TagNotFoundException("id " + id);
+            throw new ObjectNotFoundException("Tag", id);
         return tag;
     }
 
-    public Optional<Tag> getByName(String name) throws TagNotFoundException {
+    public Optional<Tag> getByName(String name) throws ObjectNotFoundException {
         Optional<Tag> tag = tagDao.findByName(name);
         if (tag.isEmpty())
-            throw new TagNotFoundException("name " + name);
+            throw new ObjectNotFoundException("Tag", name);
         return tag;
     }
 
     @Transactional
-    public void deleteById(long id) throws TagNotFoundException {
+    public void deleteById(long id) throws ObjectNotFoundException {
         if (!tagDao.existsById(id)) {
-            throw new TagNotFoundException("id " + id);
+            throw new ObjectNotFoundException("Tag", id);
         }
         tagDao.deleteById(id);
     }
 
     @Transactional
-    public Tag save(String tagName) throws TagIsExistException {
+    public Tag save(String tagName) throws ObjectIsExistException {
         if (tagDao.existsByName(tagName)) {
-            throw new TagIsExistException("name " + tagName);
+            throw new ObjectIsExistException("Tag", tagName);
         }
         return tagDao.save(new Tag(tagName));
     }
@@ -81,22 +93,32 @@ public class TagService implements TagServiceInterface {
     }
 
     @Override
-    public List<Tag> getByUserId(long userId) {
-        return orderRepository.findAllByOwnerId(userId).stream()
+    public Page<Tag> getByUserId(long userId, Pageable pageable) throws ObjectNotFoundException {
+        if(!userRepository.existsById(userId)){
+            throw new ObjectNotFoundException("User", userId);
+        }
+        var orders = orderRepository.findAllByOwnerId(userId, pageable);
+        var tags = orders.stream()
                 .flatMap(order -> order.getGiftCertificate().getTags().stream())
                 .distinct()
                 .toList();
+        return new PageImpl<>(tags, orders.getPageable(), orders.getTotalElements());
     }
 
     @Override
-    public Optional<Tag> getMostWidelyByUserId(long userId) {
-        var tags =  orderRepository.findAllByOwnerId(userId).stream()
+    public Optional<Tag> getMostWidelyByUserId(long userId) throws ObjectNotFoundException {
+        if(!userRepository.existsById(userId)){
+            throw new ObjectNotFoundException("User", userId);
+        }
+        var tags =  orderRepository.findAllByOwnerId(userId, Pageable.unpaged()).stream()
                 .flatMap(order -> order.getGiftCertificate().getTags().stream())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .get().getKey();
-        return Optional.ofNullable(tags);
+                .max(Map.Entry.comparingByValue());
+        if (tags.isPresent()) {
+            return Optional.ofNullable(tags.get().getKey());
+        }
+        throw new ObjectNotFoundException("Tag", "null");
     }
 
 
