@@ -54,7 +54,12 @@ public class OrderService implements OrderServiceInterface {
             throw new ObjectNotFoundException("User", userId);
         return user.get().getOrders();
     }
-
+    @Override
+    public Page<Order> getByUserId(long userId, Pageable pageable) throws ObjectNotFoundException {
+        if(!orderRepository.existsById(userId))
+            throw new ObjectNotFoundException("User", userId);
+        return orderRepository.findAllByOwnerId(userId, pageable);
+    }
     @Override
     public Order save(Order order) {
         return orderRepository.save(order);//TODO: validate order

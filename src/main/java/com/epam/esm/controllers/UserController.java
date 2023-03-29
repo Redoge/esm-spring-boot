@@ -13,19 +13,20 @@ import com.epam.esm.services.UserService;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.services.interfaces.UserServiceInterface;
+import com.epam.esm.util.mappers.hateoas.OrderHateoasMapper;
 import com.epam.esm.util.mappers.hateoas.UserHateoasMapper;
 import com.epam.esm.util.mappers.hateoas.models.GiftCertificateRepresentationModel;
+import com.epam.esm.util.mappers.hateoas.models.OrderRepresentationModel;
 import com.epam.esm.util.mappers.hateoas.models.TagRepresentationModel;
 import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -37,12 +38,13 @@ public class UserController{
     private final GiftCertificateServiceInterface giftCertificateService;
     private final UserHateoasMapper hateoasMapper;
     private final OrderService orderService;
+    private final OrderHateoasMapper orderHateoasMapper;
 
     public UserController(UserService userService, TagServiceInterface tagService,
                           HateoasMapperInterface<TagRepresentationModel, Tag> tagHateoasMapper,
                           HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> gCertHateoasMapper,
                           GiftCertificateServiceInterface giftCertificateService,
-                          UserHateoasMapper hateoasMapper, OrderService orderService) {
+                          UserHateoasMapper hateoasMapper, OrderService orderService, OrderHateoasMapper orderHateoasMapper) {
         this.userService = userService;
         this.tagService = tagService;
         this.tagHateoasMapper = tagHateoasMapper;
@@ -50,6 +52,7 @@ public class UserController{
         this.giftCertificateService = giftCertificateService;
         this.hateoasMapper = hateoasMapper;
         this.orderService = orderService;
+        this.orderHateoasMapper = orderHateoasMapper;
     }
 
     @GetMapping
@@ -93,8 +96,8 @@ public class UserController{
         return gCertHateoasMapper.getPagedModel(tags, pageable);
     }
     @GetMapping("/{id}/orders")
-    public List<Order> getOrdersByUserId(@PathVariable Long id) throws ObjectNotFoundException {//TODO:representation
-        var orders = orderService.getByUserId(id);
-        return orders;
+    public CollectionModel<OrderRepresentationModel> getOrdersByUserId(@PathVariable Long id, Pageable pageable) throws Exception {//TODO:representation
+        var orders = orderService.getByUserId(id, pageable);
+        return orderHateoasMapper.getPagedModel(orders, pageable);
     }
 }

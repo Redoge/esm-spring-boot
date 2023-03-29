@@ -19,5 +19,7 @@ public interface OrderServiceInterface {
     Order save(Order order);
     Order saveByPojo(OrderSaveRequestPojo order) throws ObjectNotFoundException, BadRequestException;
     void deleteById(Long id) throws ObjectNotFoundException;
+    Page<Order> getByUserId(long userId, Pageable pageable) throws ObjectNotFoundException;
 
-}
+
+    }
