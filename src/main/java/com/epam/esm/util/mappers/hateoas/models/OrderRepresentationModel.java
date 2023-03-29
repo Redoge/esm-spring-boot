@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Relation(value = "OrderRepresentationModel", collectionRelation = "orders")
 public class OrderRepresentationModel extends RepresentationModel<OrderRepresentationModel> {
     private final long id;
 

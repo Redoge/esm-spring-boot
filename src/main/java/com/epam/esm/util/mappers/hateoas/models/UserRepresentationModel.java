@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 
@@ -15,6 +16,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Relation(value = "UserRepresentationModel", collectionRelation = "users")
 public class UserRepresentationModel extends RepresentationModel<UserRepresentationModel> {
     private long id;
     private final String username;
