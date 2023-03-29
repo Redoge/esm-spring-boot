@@ -27,7 +27,7 @@ public class UserRepresentationModel extends RepresentationModel<UserRepresentat
 
         try {
             add(linkTo(methodOn(UserController.class).getById(user.getId())).withSelfRel());
-            add(linkTo(methodOn(UserController.class).getCertificatesByUserId(user.getId())).withRel("gift_certificates"));
+            add(linkTo(methodOn(UserController.class).getCertificatesByUserId(user.getId(), null)).withRel("gift_certificates"));
             add(linkTo(methodOn(UserController.class).getOrdersByUserId(user.getId())).withRel("orders"));
             add(linkTo(methodOn(UserController.class).removeById(user.getId())).withRel("delete").withType("DELETE"));
         } catch (Exception ignored) {

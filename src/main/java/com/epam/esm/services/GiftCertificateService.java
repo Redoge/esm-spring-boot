@@ -15,10 +15,15 @@ import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.GiftCertificateMapper;
 import com.epam.esm.util.sorters.GiftCertificateSorter;
 import com.epam.esm.util.validators.GiftCertificateValidator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +51,9 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
 
     public List<GiftCertificate> getAll() {
         return giftCertificateDao.findAll();
+    }
+    public Page<GiftCertificate> getAll(Pageable pageable) {
+        return giftCertificateDao.findAll(pageable);
     }
 
     public Optional<GiftCertificate> getById(long id) throws ObjectNotFoundException {
@@ -105,41 +113,55 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         }
     }
 
-    public List<GiftCertificate> getByGiftCertificateSearchRequestPojo(GiftCertificateSearchRequestPojo certsSearchReqPojo) {
-        List<GiftCertificate> gCerts = getGiftCertificateMainDtoBySearchReq(certsSearchReqPojo);
-        return giftCertificateSorter.sortedGiftCertificateMainDtoBySearchReq(gCerts, certsSearchReqPojo);
+    public Page<GiftCertificate> getByGiftCertificateSearchRequestPojo(GiftCertificateSearchRequestPojo certsSearchReqPojo, Pageable pageable) {
+        return getGiftCertificateMainDtoBySearchReq(certsSearchReqPojo, pageable);
     }
 
     @Override
-    public List<GiftCertificate> getByUserId(Long id) throws ObjectNotFoundException {
+    public Page<GiftCertificate> getByUserId(Long id, Pageable pageable) throws ObjectNotFoundException {
         var user = userRepository.findById(id);
-        if(user.isEmpty())
+        if(user.isEmpty()) {
             throw new ObjectNotFoundException("User", id);
+        }
 
-        return user.get().getOrders()
+        var giftCertificates = user.get().getOrders()
                 .stream()
                 .map(Order::getGiftCertificate)
                 .distinct()
                 .toList();
+
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<GiftCertificate> pageList;
+
+        if (giftCertificates.size() < startItem) {
+            pageList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, giftCertificates.size());
+            pageList = giftCertificates.subList(startItem, toIndex);
+        }
+
+        return new PageImpl<>(pageList, PageRequest.of(currentPage, pageSize), giftCertificates.size());
     }
 
-    private List<GiftCertificate> getGiftCertificateMainDtoBySearchReq(GiftCertificateSearchRequestPojo certsSearchReqPojo) {
-        List<GiftCertificate> gCerts;
+    private Page<GiftCertificate> getGiftCertificateMainDtoBySearchReq(GiftCertificateSearchRequestPojo certsSearchReqPojo, Pageable pageable) {
+        Page<GiftCertificate> gCerts;
         var nameIsPresent = isNotEmpty(certsSearchReqPojo.getName());
         var descriptionIsPresent = isNotEmpty(certsSearchReqPojo.getDescription());
         var tagIsPresent = isNotEmpty(certsSearchReqPojo.getTagName());
         if (nameIsPresent) {
             gCerts = tagIsPresent ?
-                    giftCertificateDao.findByNameContainingAndTagsName(certsSearchReqPojo.getName(), certsSearchReqPojo.getTagName()) :
-                    giftCertificateDao.findByNameContaining(certsSearchReqPojo.getName());
+                    giftCertificateDao.findByNameContainingAndTagsName(certsSearchReqPojo.getName(), certsSearchReqPojo.getTagName(), pageable) :
+                    giftCertificateDao.findByNameContaining(certsSearchReqPojo.getName(), pageable);
         } else if (descriptionIsPresent) {
             gCerts = tagIsPresent ?
-                    giftCertificateDao.findByDescriptionContainingAndTagsName(certsSearchReqPojo.getDescription(), certsSearchReqPojo.getTagName()) :
-                    giftCertificateDao.findByDescriptionContaining(certsSearchReqPojo.getDescription());
+                    giftCertificateDao.findByDescriptionContainingAndTagsName(certsSearchReqPojo.getDescription(), certsSearchReqPojo.getTagName(), pageable) :
+                    giftCertificateDao.findByDescriptionContaining(certsSearchReqPojo.getDescription(), pageable);
         } else {
             gCerts = tagIsPresent ?
-                    giftCertificateDao.findByTagsName(certsSearchReqPojo.getTagName()) :
-                    getAll();
+                    giftCertificateDao.findByTagsName(certsSearchReqPojo.getTagName(), pageable) :
+                    getAll(pageable);
         }
         return gCerts;
     }

@@ -6,12 +6,15 @@ import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface GiftCertificateServiceInterface {
     List<GiftCertificate> getAll();
+    Page<GiftCertificate> getAll(Pageable pageable);
 
     Optional<GiftCertificate> getById(long id) throws ObjectNotFoundException;
 
@@ -24,8 +27,8 @@ public interface GiftCertificateServiceInterface {
 
     void update(GiftCertificateSaveRequestPojo giftCertificatePojo) throws ObjectNotFoundException;
 
-    List<GiftCertificate> getByGiftCertificateSearchRequestPojo(GiftCertificateSearchRequestPojo certsSearchReqPojo);
+    Page<GiftCertificate> getByGiftCertificateSearchRequestPojo(GiftCertificateSearchRequestPojo certsSearchReqPojo, Pageable pageable);
 
-    List<GiftCertificate> getByUserId(Long id) throws ObjectNotFoundException;
+    Page<GiftCertificate> getByUserId(Long id, Pageable pageable) throws ObjectNotFoundException;
 
 }

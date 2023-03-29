@@ -8,7 +8,9 @@ import com.epam.esm.services.OrderService;
 import com.epam.esm.util.mappers.hateoas.models.OrderRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +25,9 @@ public class OrderController {
         this.hateoasMapper = hateoasMapper;
     }
     @GetMapping
-    public CollectionModel<OrderRepresentationModel> getAll() throws Exception {
-        var orders = orderService.getAll();
-        return hateoasMapper.getCollectionModel(orders);
+    public PagedModel<OrderRepresentationModel> getAll(Pageable pageable) throws Exception {
+        var orders = orderService.getAll(pageable);
+        return hateoasMapper.getPagedModel(orders, pageable);
     }
     @GetMapping("/{id}")
     public OrderRepresentationModel getById(@PathVariable long id) throws Exception {

@@ -10,6 +10,9 @@ import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.util.filters.TagFilter;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,6 +38,9 @@ public class TagService implements TagServiceInterface {
         this.tagFilter = tagFilter;
     }
 
+    public Page<Tag> getAll(Pageable pageable) {
+        return tagDao.findAll(pageable);
+    }
     public List<Tag> getAll() {
         return tagDao.findAll();
     }
@@ -87,14 +93,16 @@ public class TagService implements TagServiceInterface {
     }
 
     @Override
-    public List<Tag> getByUserId(long userId) throws ObjectNotFoundException {
+    public Page<Tag> getByUserId(long userId, Pageable pageable) throws ObjectNotFoundException {
         if(!userRepository.existsById(userId)){
             throw new ObjectNotFoundException("User", userId);
         }
-        return orderRepository.findAllByOwnerId(userId).stream()
+        var orders = orderRepository.findAllByOwnerId(userId, pageable);
+        var tags = orders.stream()
                 .flatMap(order -> order.getGiftCertificate().getTags().stream())
                 .distinct()
                 .toList();
+        return new PageImpl<>(tags, orders.getPageable(), orders.getTotalElements());
     }
 
     @Override
@@ -102,7 +110,7 @@ public class TagService implements TagServiceInterface {
         if(!userRepository.existsById(userId)){
             throw new ObjectNotFoundException("User", userId);
         }
-        var tags =  orderRepository.findAllByOwnerId(userId).stream()
+        var tags =  orderRepository.findAllByOwnerId(userId, Pageable.unpaged()).stream()
                 .flatMap(order -> order.getGiftCertificate().getTags().stream())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream()

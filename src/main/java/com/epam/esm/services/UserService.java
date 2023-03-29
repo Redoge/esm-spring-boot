@@ -8,6 +8,8 @@ import com.epam.esm.pojo.UserSaveRequestPojo;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.UserServiceInterface;
 import com.epam.esm.util.mappers.UserMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +27,10 @@ public class UserService implements UserServiceInterface {
     @Override
     public List<User> getAll() {
         return userRepository.findAll();
+    }
+    @Override
+    public Page<User> getAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override

@@ -9,6 +9,8 @@ import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.OrderServiceInterface;
 import com.epam.esm.util.mappers.OrderMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +33,10 @@ public class OrderService implements OrderServiceInterface {
     @Override
     public List<Order> getAll() {
         return orderRepository.findAll();
+    }
+    @Override
+    public Page<Order> getAll(Pageable pageable) {
+        return orderRepository.findAll(pageable);
     }
 
     @Override

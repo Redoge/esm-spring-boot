@@ -19,7 +19,9 @@ import com.epam.esm.util.mappers.hateoas.models.TagRepresentationModel;
 import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,9 +53,9 @@ public class UserController{
     }
 
     @GetMapping
-    public CollectionModel<UserRepresentationModel> getAll() throws Exception {
-        var users = userService.getAll();
-        return hateoasMapper.getCollectionModel(users);
+    public PagedModel<UserRepresentationModel> getAll(Pageable pageable) throws Exception {
+        var users = userService.getAll(pageable);
+        return hateoasMapper.getPagedModel(users, pageable);
     }
     @GetMapping("/{id}")
     public UserRepresentationModel getById(@PathVariable long id) throws Exception {
@@ -75,9 +77,9 @@ public class UserController{
     }
 
     @GetMapping("/{id}/tags")
-    public CollectionModel<TagRepresentationModel> getTagsByUserId(@PathVariable Long id) throws Exception {
-        var tags = tagService.getByUserId(id);
-        return tagHateoasMapper.getCollectionModel(tags);
+    public CollectionModel<TagRepresentationModel> getTagsByUserId(@PathVariable Long id, Pageable pageable) throws Exception {
+        var tags = tagService.getByUserId(id, pageable);
+        return tagHateoasMapper.getPagedModel(tags, pageable);
     }
     @GetMapping("/{id}/tags/top")
     public TagRepresentationModel getTopTagsByUserId(@PathVariable Long id) throws Exception {
@@ -86,9 +88,9 @@ public class UserController{
     }
 
     @GetMapping("/{id}/certificates")
-    public CollectionModel<GiftCertificateRepresentationModel> getCertificatesByUserId(@PathVariable Long id) throws Exception {
-        var tags = giftCertificateService.getByUserId(id);
-        return gCertHateoasMapper.getCollectionModel(tags);
+    public CollectionModel<GiftCertificateRepresentationModel> getCertificatesByUserId(@PathVariable Long id, Pageable pageable) throws Exception {
+        var tags = giftCertificateService.getByUserId(id, pageable);
+        return gCertHateoasMapper.getPagedModel(tags, pageable);
     }
     @GetMapping("/{id}/orders")
     public List<Order> getOrdersByUserId(@PathVariable Long id) throws ObjectNotFoundException {//TODO:representation
