@@ -8,6 +8,7 @@ import com.epam.esm.pojo.UserSaveRequestPojo;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.UserServiceInterface;
 import com.epam.esm.util.mappers.UserMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,10 @@ import java.util.Optional;
 import static com.epam.esm.util.StringConst.USER;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
 
     @Override
     public List<User> getAll() {

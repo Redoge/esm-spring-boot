@@ -8,6 +8,7 @@ import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.OrderServiceInterface;
 import com.epam.esm.util.mappers.OrderMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,16 +21,11 @@ import static com.epam.esm.util.StringConst.USER;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService implements OrderServiceInterface {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final OrderMapper orderMapper;
-
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository, OrderMapper orderMapper) {
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
-        this.orderMapper = orderMapper;
-    }
 
     @Override
     public List<Order> getAll() {

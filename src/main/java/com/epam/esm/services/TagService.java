@@ -10,6 +10,7 @@ import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.util.filters.TagFilter;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,18 +27,12 @@ import static com.epam.esm.util.StringConst.TAG;
 import static com.epam.esm.util.StringConst.USER;
 
 @Service
+@RequiredArgsConstructor
 public class TagService implements TagServiceInterface {
     private final TagRepository tagDao;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final TagFilter tagFilter;
-
-    public TagService(TagRepository tagDao, OrderRepository orderRepository, UserRepository userRepository, TagFilter tagFilter) {
-        this.tagDao = tagDao;
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
-        this.tagFilter = tagFilter;
-    }
 
     public Page<Tag> getAll(Pageable pageable) {
         return tagDao.findAll(pageable);

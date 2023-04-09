@@ -13,6 +13,7 @@ import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.GiftCertificateMapper;
 import com.epam.esm.util.validators.GiftCertificateValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,7 @@ import static com.epam.esm.util.StringConst.GIFT_CERTIFICATE;
 import static io.micrometer.common.util.StringUtils.isNotEmpty;
 
 @Service
+@RequiredArgsConstructor
 public class GiftCertificateService implements GiftCertificateServiceInterface {
     private final GiftCertificateRepository giftCertificateDao;
     private final GiftCertificateMapper giftCertificateMapper;
@@ -36,15 +38,6 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     private final TagService tagService;
     private final UserRepository userRepository;
 
-    public GiftCertificateService(GiftCertificateRepository giftCertificateDao,
-                                  GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator,  TagService tagService, UserRepository userRepository) {
-        this.giftCertificateDao = giftCertificateDao;
-        this.giftCertificateMapper = giftCertificateMapper;
-        this.giftCertificateValidator = giftCertificateValidator;
-        this.tagService = tagService;
-
-        this.userRepository = userRepository;
-    }
 
     public List<GiftCertificate> getAll() {
         return giftCertificateDao.findAll();
