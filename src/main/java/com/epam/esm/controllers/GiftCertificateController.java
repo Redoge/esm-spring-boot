@@ -8,6 +8,7 @@ import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.hateoas.models.GiftCertificateRepresentationModel;
+import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -61,5 +62,10 @@ public class GiftCertificateController {
         giftCertificateService.update(giftCert);
         var giftCertificate = giftCertificateService.getById(id);
         return ResponseEntity.ok(giftCertificate);
+    }
+    @GetMapping("/name/{name}")
+    public PagedModel<GiftCertificateRepresentationModel> getUserByPartName(@PathVariable String name, Pageable pageable) throws Exception {
+        var gCerts = giftCertificateService.getByPartName(name, pageable);
+        return hateoasMapper.getPagedModel(gCerts, pageable);
     }
 }

@@ -65,5 +65,10 @@ public class UserService implements UserServiceInterface {
         return userRepository.save(user);
     }
 
-    
+    @Override
+    public Page<User> getByPartName(String partName, Pageable pageable) {
+        return userRepository.findByUsernameContaining(partName, pageable);
+    }
+
+
 }

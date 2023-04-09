@@ -1,7 +1,6 @@
 package com.epam.esm.controllers;
 
 import com.epam.esm.entities.GiftCertificate;
-import com.epam.esm.entities.Order;
 import com.epam.esm.entities.Tag;
 import com.epam.esm.entities.User;
 import com.epam.esm.exceptions.BadRequestException;
@@ -9,7 +8,6 @@ import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.UserSaveRequestPojo;
 import com.epam.esm.services.OrderService;
-import com.epam.esm.services.UserService;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.services.interfaces.UserServiceInterface;
@@ -22,7 +20,6 @@ import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
@@ -54,7 +51,11 @@ public class UserController{
         var users = userService.getById(id);
         return hateoasMapper.getRepresentationModel(users.get());
     }
-
+    @GetMapping("/name/{name}")
+    public PagedModel<UserRepresentationModel> getUserByPartName(@PathVariable String name, Pageable pageable) throws Exception {
+        var users = userService.getByPartName(name, pageable);
+        return hateoasMapper.getPagedModel(users, pageable);
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeById(@PathVariable long id) throws ObjectNotFoundException {
         userService.deleteById(id);

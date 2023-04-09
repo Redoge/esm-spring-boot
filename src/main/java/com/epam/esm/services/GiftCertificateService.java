@@ -135,6 +135,11 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         return new PageImpl<>(pageList, PageRequest.of(currentPage, pageSize), giftCertificates.size());
     }
 
+    @Override
+    public Page<GiftCertificate> getByPartName(String partName, Pageable pageable) {
+        return giftCertificateDao.findByNameContaining(partName, pageable);
+    }
+
     private Page<GiftCertificate> getGiftCertificateMainDtoBySearchReq(GiftCertificateSearchRequestPojo certsSearchReqPojo, Pageable pageable) {
         Page<GiftCertificate> gCerts;
         var nameIsPresent = isNotEmpty(certsSearchReqPojo.getName());

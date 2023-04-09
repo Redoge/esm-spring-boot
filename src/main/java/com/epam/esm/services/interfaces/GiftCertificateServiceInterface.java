@@ -31,4 +31,6 @@ public interface GiftCertificateServiceInterface {
 
     Page<GiftCertificate> getByUserId(Long id, Pageable pageable) throws ObjectNotFoundException;
 
+    Page<GiftCertificate> getByPartName(String partName, Pageable pageable);
+
 }

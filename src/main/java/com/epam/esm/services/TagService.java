@@ -116,5 +116,10 @@ public class TagService implements TagServiceInterface {
         throw new ObjectNotFoundException(TAG, "null");
     }
 
+    @Override
+    public Page<Tag> getByPartName(String partName, Pageable pageable) {
+        return tagDao.findByNameContaining(partName, pageable);
+    }
+
 
 }

@@ -5,6 +5,7 @@ import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.util.mappers.hateoas.models.TagRepresentationModel;
+import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +48,10 @@ public class TagController{
     public ResponseEntity<Tag> create(@RequestBody Tag tag) throws ObjectIsExistException {
         var createdTag = tagService.save(tag.getName());
         return ResponseEntity.ok(createdTag);
+    }
+    @GetMapping("/name/{name}")
+    public PagedModel<TagRepresentationModel> getUserByPartName(@PathVariable String name, Pageable pageable) throws Exception {
+        var tags = tagService.getByPartName(name, pageable);
+        return hateoasMapper.getPagedModel(tags, pageable);
     }
 }
