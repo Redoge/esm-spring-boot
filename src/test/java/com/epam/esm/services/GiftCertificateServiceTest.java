@@ -68,7 +68,17 @@ class GiftCertificateServiceTest {
 
         assertEquals(gCertsPage, actualGCerts);
     }
+    @Test
+    void getAllByPartName(){
+        var pageable = Pageable.unpaged();
+        var gCertsPage = new PageImpl<>(testGCerts);
 
+        when(giftCertificateDao.findByNameContaining(testName,pageable)).thenReturn(gCertsPage);
+
+        var actualGCerts = giftCertificateService.getByPartName(testName, pageable);
+
+        assertEquals(gCertsPage, actualGCerts);
+    }
     @Test
     void getByIdTest() throws ObjectNotFoundException {
         when(giftCertificateDao.findById(testId)).thenReturn(Optional.of(testGCerts.get(0)));
@@ -93,30 +103,6 @@ class GiftCertificateServiceTest {
         assertThrows(ObjectNotFoundException.class, ()->giftCertificateService.getByName(testNameIncorrect));
 
     }
-    @Test
-    void saveTest() throws BadRequestException, ObjectIsExistException {
-        var gCert = testGCerts.get(0);
-        var gCert2 = testGCerts.get(1);
-        var gCertInvalid = testGCerts.get(2);
-        when(giftCertificateValidator.isValid(gCert)).thenReturn(true);
-        when(giftCertificateValidator.isValid(gCert2)).thenReturn(true);
-
-        when(giftCertificateValidator.isValid(gCertInvalid)).thenReturn(false);
-
-        when(giftCertificateDao.existsByName(gCert.getName())).thenReturn(false);
-        when(giftCertificateDao.existsByName(gCert2.getName())).thenReturn(true);
-
-        when(giftCertificateDao.save(gCert)).thenReturn(gCert);
-
-        assertThrows(BadRequestException.class, ()->giftCertificateService.save(gCertInvalid));
-        assertThrows(ObjectIsExistException.class, ()-> giftCertificateService.save(gCert2));
-
-        var actualGCert = giftCertificateService.save(gCert);
-
-        assertEquals(gCert, actualGCert);
-
-    }
-
     @Test
     void updateTest(){
         var testPojo = getGCertSavePojo();

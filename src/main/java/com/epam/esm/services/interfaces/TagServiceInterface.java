@@ -1,5 +1,6 @@
 package com.epam.esm.services.interfaces;
 
+import com.epam.esm.entities.GiftCertificate;
 import com.epam.esm.entities.Tag;
 import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
@@ -25,4 +26,6 @@ import java.util.Optional;
      List<Tag> getTagsByTagName(List<String> tags);
      Page<Tag> getByUserId(long userId, Pageable pageable) throws ObjectNotFoundException;
      Optional<Tag> getMostWidelyByUserId(long userId) throws ObjectNotFoundException;
-}
+     Page<Tag> getByPartName(String partName, Pageable pageable);
+
+ }

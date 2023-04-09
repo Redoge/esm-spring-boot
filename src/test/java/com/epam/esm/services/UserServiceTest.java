@@ -68,7 +68,19 @@ class UserServiceTest {
         assertEquals(userList, actualUserList);
         verify(userRepository, times(1)).findAll();
     }
+    @Test
+    void testGetByPartName() {
 
+        Pageable pageable = Pageable.unpaged();
+
+        var userPage = new PageImpl<>(List.of(testUser), pageable, 1);
+
+        when(userRepository.findByUsernameContaining(testUser.getUsername(),pageable)).thenReturn(userPage);
+
+        var actualUserPage = userService.getByPartName(testUser.getUsername(), pageable);
+
+        assertEquals(userPage, actualUserPage);
+    }
     @Test
     void testGetAllWithPageable() {
         Pageable pageable = Pageable.unpaged();

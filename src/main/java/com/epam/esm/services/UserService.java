@@ -8,21 +8,21 @@ import com.epam.esm.pojo.UserSaveRequestPojo;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.UserServiceInterface;
 import com.epam.esm.util.mappers.UserMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.epam.esm.util.StringConst.USER;
+
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
 
     @Override
     public List<User> getAll() {
@@ -37,14 +37,14 @@ public class UserService implements UserServiceInterface {
     public Optional<User> getById(long id) throws ObjectNotFoundException {
         var user = userRepository.findById(id);
         if(user.isEmpty())
-            throw new ObjectNotFoundException("User", id);
+            throw new ObjectNotFoundException(USER, id);
         return user;
     }
 
     @Override
     public User save(User user) throws ObjectIsExistException {
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new ObjectIsExistException("User", user.getUsername());
+            throw new ObjectIsExistException(USER, user.getUsername());
         }
         return userRepository.save(user);//TODO: validate user
     }
@@ -52,7 +52,7 @@ public class UserService implements UserServiceInterface {
     @Override
     public void deleteById(long id) throws ObjectNotFoundException {
         if (!userRepository.existsById(id)) {
-            throw new ObjectNotFoundException("User", id);
+            throw new ObjectNotFoundException(USER, id);
         }
         userRepository.deleteById(id);
     }
@@ -61,9 +61,14 @@ public class UserService implements UserServiceInterface {
     public User save(UserSaveRequestPojo userPojo) throws BadRequestException, ObjectIsExistException {
         var user = userMapper.mapUserPojoToUSer(userPojo);
         if(userRepository.existsByUsername(user.getUsername()))
-            throw new ObjectIsExistException("User", user.getUsername());
+            throw new ObjectIsExistException(USER, user.getUsername());
         return userRepository.save(user);
     }
 
-    
+    @Override
+    public Page<User> getByPartName(String partName, Pageable pageable) {
+        return userRepository.findByUsernameContaining(partName, pageable);
+    }
+
+
 }

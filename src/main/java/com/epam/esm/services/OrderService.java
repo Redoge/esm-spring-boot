@@ -2,13 +2,13 @@ package com.epam.esm.services;
 
 import com.epam.esm.entities.Order;
 import com.epam.esm.exceptions.BadRequestException;
-import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.OrderSaveRequestPojo;
 import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.OrderServiceInterface;
 import com.epam.esm.util.mappers.OrderMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,19 +16,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.esm.util.StringConst.ORDER;
+import static com.epam.esm.util.StringConst.USER;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService implements OrderServiceInterface {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final OrderMapper orderMapper;
-
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository, OrderMapper orderMapper) {
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
-        this.orderMapper = orderMapper;
-    }
 
     @Override
     public List<Order> getAll() {
@@ -43,7 +40,7 @@ public class OrderService implements OrderServiceInterface {
     public Optional<Order> getById(long id) throws ObjectNotFoundException {
         var order = orderRepository.findById(id);
         if(order.isEmpty())
-            throw new ObjectNotFoundException("Order", id);
+            throw new ObjectNotFoundException(ORDER, id);
         return order;
     }
 
@@ -51,13 +48,13 @@ public class OrderService implements OrderServiceInterface {
     public List<Order> getByUserId(long userId) throws ObjectNotFoundException {
         var user = userRepository.findById(userId);
         if(user.isEmpty())
-            throw new ObjectNotFoundException("User", userId);
+            throw new ObjectNotFoundException(USER, userId);
         return user.get().getOrders();
     }
     @Override
     public Page<Order> getByUserId(long userId, Pageable pageable) throws ObjectNotFoundException {
         if(!orderRepository.existsById(userId))
-            throw new ObjectNotFoundException("User", userId);
+            throw new ObjectNotFoundException(USER, userId);
         return orderRepository.findAllByOwnerId(userId, pageable);
     }
     @Override
@@ -86,7 +83,7 @@ public class OrderService implements OrderServiceInterface {
     @Override
     public void deleteById(Long id) throws ObjectNotFoundException {
         if (!orderRepository.existsById(id)) {
-            throw new ObjectNotFoundException("Order", id);
+            throw new ObjectNotFoundException(ORDER, id);
         }
         orderRepository.deleteById(id);
     }

@@ -5,28 +5,26 @@ import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.util.mappers.hateoas.models.TagRepresentationModel;
+import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import static com.epam.esm.util.StringConst.deletedSuccessfully;
+
 
 @RestController
 @RequestMapping("/api/tags")
+@RequiredArgsConstructor
 public class TagController{
     private final TagServiceInterface tagService;
     private final HateoasMapperInterface<TagRepresentationModel,Tag> hateoasMapper;
 
-    public TagController(TagServiceInterface tagService, HateoasMapperInterface<TagRepresentationModel, Tag> hateoasMapper) {
-        this.tagService = tagService;
-        this.hateoasMapper = hateoasMapper;
-    }
     @GetMapping
     public PagedModel<TagRepresentationModel> getAll(Pageable pageable) throws Exception {
         Page<Tag> tags = tagService.getAll(pageable);
@@ -42,7 +40,7 @@ public class TagController{
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeById(@PathVariable long id) throws ObjectNotFoundException {
         tagService.deleteById(id);
-        return ResponseEntity.ok("Deleted successfully!");
+        return ResponseEntity.ok(deletedSuccessfully);
     }
 
     @PostMapping
@@ -50,5 +48,10 @@ public class TagController{
     public ResponseEntity<Tag> create(@RequestBody Tag tag) throws ObjectIsExistException {
         var createdTag = tagService.save(tag.getName());
         return ResponseEntity.ok(createdTag);
+    }
+    @GetMapping("/name/{name}")
+    public PagedModel<TagRepresentationModel> getUserByPartName(@PathVariable String name, Pageable pageable) throws Exception {
+        var tags = tagService.getByPartName(name, pageable);
+        return hateoasMapper.getPagedModel(tags, pageable);
     }
 }

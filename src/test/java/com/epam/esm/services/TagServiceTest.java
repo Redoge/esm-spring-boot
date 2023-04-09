@@ -60,7 +60,17 @@ public class TagServiceTest {
         Page<Tag> actualPage = tagService.getAll(pageable);
         assertEquals(expectedPage, actualPage);
     }
+    @Test
+    void testGetByPartName() {
+        Pageable pageable = Pageable.unpaged();
+        List<Tag> expectedTags = testTags.subList(0,0);
+        Page<Tag> expectedPage = new PageImpl<>(expectedTags, pageable, expectedTags.size());
 
+        when(tagRepository.findByNameContaining(TAG_NAME_1, pageable)).thenReturn(expectedPage);
+
+        Page<Tag> actualPage = tagService.getByPartName(TAG_NAME_1, pageable);
+        assertEquals(expectedPage, actualPage);
+    }
     @Test
     void testGetAllNoPageable() {
         List<Tag> expectedTags = testTags;
