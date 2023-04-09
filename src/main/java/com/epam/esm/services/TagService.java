@@ -22,8 +22,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.springframework.util.ObjectUtils.isEmpty;
-
 @Service
 public class TagService implements TagServiceInterface {
     private final TagRepository tagDao;

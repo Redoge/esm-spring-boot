@@ -2,7 +2,6 @@ package com.epam.esm.services;
 
 import com.epam.esm.entities.Order;
 import com.epam.esm.exceptions.BadRequestException;
-import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.OrderSaveRequestPojo;
 import com.epam.esm.repositories.OrderRepository;

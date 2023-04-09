@@ -9,7 +9,6 @@ import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.repositories.GiftCertificateRepository;
-import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.GiftCertificateMapper;
@@ -32,16 +31,14 @@ import static io.micrometer.common.util.StringUtils.isNotEmpty;
 @Service
 public class GiftCertificateService implements GiftCertificateServiceInterface {
     private final GiftCertificateRepository giftCertificateDao;
-    private final GiftCertificateSorter giftCertificateSorter;
     private final GiftCertificateMapper giftCertificateMapper;
     private final GiftCertificateValidator giftCertificateValidator;
     private final TagService tagService;
     private final UserRepository userRepository;
 
-    public GiftCertificateService(GiftCertificateRepository giftCertificateDao, GiftCertificateSorter giftCertificateSorter,
+    public GiftCertificateService(GiftCertificateRepository giftCertificateDao,
                                   GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator,  TagService tagService, UserRepository userRepository) {
         this.giftCertificateDao = giftCertificateDao;
-        this.giftCertificateSorter = giftCertificateSorter;
         this.giftCertificateMapper = giftCertificateMapper;
         this.giftCertificateValidator = giftCertificateValidator;
         this.tagService = tagService;
