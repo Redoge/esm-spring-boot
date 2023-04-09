@@ -10,6 +10,9 @@ import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.hateoas.models.GiftCertificateRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/certificates")
+@RequiredArgsConstructor
 public class GiftCertificateController {
     private final GiftCertificateServiceInterface giftCertificateService;
     private final HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> hateoasMapper;
-    public GiftCertificateController(GiftCertificateServiceInterface gCertService, HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> hateoasMapper) {
-        this.giftCertificateService = gCertService;
-        this.hateoasMapper = hateoasMapper;
-    }
+
     @GetMapping
     public PagedModel<GiftCertificateRepresentationModel> getAll(@ModelAttribute GiftCertificateSearchRequestPojo req, Pageable pageable) throws Exception {
         var gCerts = giftCertificateService.getByGiftCertificateSearchRequestPojo(req, pageable);

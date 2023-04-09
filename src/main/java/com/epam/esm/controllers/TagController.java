@@ -7,26 +7,21 @@ import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.util.mappers.hateoas.models.TagRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/tags")
+@RequiredArgsConstructor
 public class TagController{
     private final TagServiceInterface tagService;
     private final HateoasMapperInterface<TagRepresentationModel,Tag> hateoasMapper;
 
-    public TagController(TagServiceInterface tagService, HateoasMapperInterface<TagRepresentationModel, Tag> hateoasMapper) {
-        this.tagService = tagService;
-        this.hateoasMapper = hateoasMapper;
-    }
     @GetMapping
     public PagedModel<TagRepresentationModel> getAll(Pageable pageable) throws Exception {
         Page<Tag> tags = tagService.getAll(pageable);

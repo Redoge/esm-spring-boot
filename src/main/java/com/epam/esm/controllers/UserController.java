@@ -21,6 +21,7 @@ import com.epam.esm.util.mappers.hateoas.models.TagRepresentationModel;
 import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController{
     private final UserServiceInterface userService;
     private final TagServiceInterface tagService;
@@ -39,21 +41,6 @@ public class UserController{
     private final UserHateoasMapper hateoasMapper;
     private final OrderService orderService;
     private final OrderHateoasMapper orderHateoasMapper;
-
-    public UserController(UserService userService, TagServiceInterface tagService,
-                          HateoasMapperInterface<TagRepresentationModel, Tag> tagHateoasMapper,
-                          HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> gCertHateoasMapper,
-                          GiftCertificateServiceInterface giftCertificateService,
-                          UserHateoasMapper hateoasMapper, OrderService orderService, OrderHateoasMapper orderHateoasMapper) {
-        this.userService = userService;
-        this.tagService = tagService;
-        this.tagHateoasMapper = tagHateoasMapper;
-        this.gCertHateoasMapper = gCertHateoasMapper;
-        this.giftCertificateService = giftCertificateService;
-        this.hateoasMapper = hateoasMapper;
-        this.orderService = orderService;
-        this.orderHateoasMapper = orderHateoasMapper;
-    }
 
     @GetMapping
     public PagedModel<UserRepresentationModel> getAll(Pageable pageable) throws Exception {

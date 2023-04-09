@@ -8,6 +8,7 @@ import com.epam.esm.services.OrderService;
 import com.epam.esm.util.mappers.hateoas.models.OrderRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
@@ -16,14 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/orders")
+@RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
     private final HateoasMapperInterface<OrderRepresentationModel, Order> hateoasMapper;
 
-    public OrderController(OrderService orderService, HateoasMapperInterface<OrderRepresentationModel, Order> hateoasMapper) {
-        this.orderService = orderService;
-        this.hateoasMapper = hateoasMapper;
-    }
     @GetMapping
     public PagedModel<OrderRepresentationModel> getAll(Pageable pageable) throws Exception {
         var orders = orderService.getAll(pageable);
