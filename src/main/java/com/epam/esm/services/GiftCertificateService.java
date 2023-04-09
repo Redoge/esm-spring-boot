@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.esm.util.StringConst.GIFT_CERTIFICATE;
 import static io.micrometer.common.util.StringUtils.isNotEmpty;
 
 @Service
@@ -55,7 +56,7 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     public Optional<GiftCertificate> getById(long id) throws ObjectNotFoundException {
         var gCerts = giftCertificateDao.findById(id);
         if (gCerts.isEmpty()) {
-            throw new ObjectNotFoundException("Gift Certificate", id);
+            throw new ObjectNotFoundException(GIFT_CERTIFICATE, id);
         }
         return gCerts;
     }
@@ -63,14 +64,14 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     public Optional<GiftCertificate> getByName(String name) throws ObjectNotFoundException {
         var gCerts = giftCertificateDao.findByName(name);
         if (gCerts.isEmpty()) {
-            throw new ObjectNotFoundException("Gift Certificate", name);
+            throw new ObjectNotFoundException(GIFT_CERTIFICATE, name);
         }
         return gCerts;
     }
     @Transactional
     public void deleteById(long id) throws ObjectNotFoundException {
         if (!giftCertificateDao.existsById(id)) {
-            throw new ObjectNotFoundException("Gift Certificate", id);
+            throw new ObjectNotFoundException(GIFT_CERTIFICATE, id);
         }
         giftCertificateDao.deleteById(id);
     }
@@ -79,12 +80,12 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     public GiftCertificate save(GiftCertificate giftCertificate) throws BadRequestException, ObjectIsExistException {
         giftCertificate.setCreateDate(LocalDateTime.now());
         giftCertificate.setLastUpdateDate(LocalDateTime.now());
-        var valid = giftCertificateValidator.isValid(giftCertificate);
-        if (!valid) {
+        var isNotValid = giftCertificateValidator.isNotValid(giftCertificate);
+        if (isNotValid) {
             throw new BadRequestException();
         }
         if (giftCertificateDao.existsByName(giftCertificate.getName())) {
-            throw new ObjectIsExistException("Gift Certificate", giftCertificate.getName());
+            throw new ObjectIsExistException(GIFT_CERTIFICATE, giftCertificate.getName());
         }
         return giftCertificateDao.save(giftCertificate);
     }

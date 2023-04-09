@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.epam.esm.util.StringConst.USER;
+
 @Service
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
@@ -37,14 +40,14 @@ public class UserService implements UserServiceInterface {
     public Optional<User> getById(long id) throws ObjectNotFoundException {
         var user = userRepository.findById(id);
         if(user.isEmpty())
-            throw new ObjectNotFoundException("User", id);
+            throw new ObjectNotFoundException(USER, id);
         return user;
     }
 
     @Override
     public User save(User user) throws ObjectIsExistException {
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new ObjectIsExistException("User", user.getUsername());
+            throw new ObjectIsExistException(USER, user.getUsername());
         }
         return userRepository.save(user);//TODO: validate user
     }
@@ -52,7 +55,7 @@ public class UserService implements UserServiceInterface {
     @Override
     public void deleteById(long id) throws ObjectNotFoundException {
         if (!userRepository.existsById(id)) {
-            throw new ObjectNotFoundException("User", id);
+            throw new ObjectNotFoundException(USER, id);
         }
         userRepository.deleteById(id);
     }
@@ -61,7 +64,7 @@ public class UserService implements UserServiceInterface {
     public User save(UserSaveRequestPojo userPojo) throws BadRequestException, ObjectIsExistException {
         var user = userMapper.mapUserPojoToUSer(userPojo);
         if(userRepository.existsByUsername(user.getUsername()))
-            throw new ObjectIsExistException("User", user.getUsername());
+            throw new ObjectIsExistException(USER, user.getUsername());
         return userRepository.save(user);
     }
 

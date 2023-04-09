@@ -14,6 +14,8 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.epam.esm.util.StringConst.deletedSuccessfully;
+
 
 @RestController
 @RequestMapping("/api/tags")
@@ -37,7 +39,7 @@ public class TagController{
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeById(@PathVariable long id) throws ObjectNotFoundException {
         tagService.deleteById(id);
-        return ResponseEntity.ok("Deleted successfully!");
+        return ResponseEntity.ok(deletedSuccessfully);
     }
 
     @PostMapping

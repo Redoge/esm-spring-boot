@@ -22,6 +22,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.epam.esm.util.StringConst.TAG;
+import static com.epam.esm.util.StringConst.USER;
+
 @Service
 public class TagService implements TagServiceInterface {
     private final TagRepository tagDao;
@@ -46,21 +49,21 @@ public class TagService implements TagServiceInterface {
     public Optional<Tag> getById(long id) throws ObjectNotFoundException {
         Optional<Tag> tag = tagDao.findById(id);
         if (tag.isEmpty())
-            throw new ObjectNotFoundException("Tag", id);
+            throw new ObjectNotFoundException(TAG, id);
         return tag;
     }
 
     public Optional<Tag> getByName(String name) throws ObjectNotFoundException {
         Optional<Tag> tag = tagDao.findByName(name);
         if (tag.isEmpty())
-            throw new ObjectNotFoundException("Tag", name);
+            throw new ObjectNotFoundException(TAG, name);
         return tag;
     }
 
     @Transactional
     public void deleteById(long id) throws ObjectNotFoundException {
         if (!tagDao.existsById(id)) {
-            throw new ObjectNotFoundException("Tag", id);
+            throw new ObjectNotFoundException(TAG, id);
         }
         tagDao.deleteById(id);
     }
@@ -68,7 +71,7 @@ public class TagService implements TagServiceInterface {
     @Transactional
     public Tag save(String tagName) throws ObjectIsExistException {
         if (tagDao.existsByName(tagName)) {
-            throw new ObjectIsExistException("Tag", tagName);
+            throw new ObjectIsExistException(TAG, tagName);
         }
         return tagDao.save(new Tag(tagName));
     }
@@ -77,9 +80,8 @@ public class TagService implements TagServiceInterface {
     public List<Tag> saveAll(List<Tag> tags) {
         return tagDao.saveAll(tags);
     }
-    /**
-     * Method receive List<String> with tags name and return List<Tag> by this name. If Tag not exist then will be created
-     */
+
+
     @Transactional
     public List<Tag> getTagsByTagName(List<String> tags) {
         var allExistTag = getAll();
@@ -93,7 +95,7 @@ public class TagService implements TagServiceInterface {
     @Override
     public Page<Tag> getByUserId(long userId, Pageable pageable) throws ObjectNotFoundException {
         if(!userRepository.existsById(userId)){
-            throw new ObjectNotFoundException("User", userId);
+            throw new ObjectNotFoundException(USER, userId);
         }
         var orders = orderRepository.findAllByOwnerId(userId, pageable);
         var tags = orders.stream()
@@ -106,7 +108,7 @@ public class TagService implements TagServiceInterface {
     @Override
     public Optional<Tag> getMostWidelyByUserId(long userId) throws ObjectNotFoundException {
         if(!userRepository.existsById(userId)){
-            throw new ObjectNotFoundException("User", userId);
+            throw new ObjectNotFoundException(USER, userId);
         }
         var tags =  orderRepository.findAllByOwnerId(userId, Pageable.unpaged()).stream()
                 .flatMap(order -> order.getGiftCertificate().getTags().stream())
@@ -116,7 +118,7 @@ public class TagService implements TagServiceInterface {
         if (tags.isPresent()) {
             return Optional.ofNullable(tags.get().getKey());
         }
-        throw new ObjectNotFoundException("Tag", "null");
+        throw new ObjectNotFoundException(TAG, "null");
     }
 
 
