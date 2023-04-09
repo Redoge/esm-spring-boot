@@ -43,7 +43,7 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public User save(User user) throws ObjectIsExistException {
-        if (userRepository.isExistsByUsername(user.getUsername())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new ObjectIsExistException("User", user.getUsername());
         }
         return userRepository.save(user);//TODO: validate user
@@ -60,7 +60,7 @@ public class UserService implements UserServiceInterface {
     @Override
     public User save(UserSaveRequestPojo userPojo) throws BadRequestException, ObjectIsExistException {
         var user = userMapper.mapUserPojoToUSer(userPojo);
-        if(userRepository.isExistsByUsername(user.getUsername()))
+        if(userRepository.existsByUsername(user.getUsername()))
             throw new ObjectIsExistException("User", user.getUsername());
         return userRepository.save(user);
     }

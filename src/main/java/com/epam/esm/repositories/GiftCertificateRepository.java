@@ -16,7 +16,6 @@ public interface GiftCertificateRepository extends JpaRepository<GiftCertificate
     Page<GiftCertificate> findByDescriptionContaining(String description, Pageable pageable);
     Page<GiftCertificate> findByNameContainingAndTagsName(String name, String tagName, Pageable pageable);
     Page<GiftCertificate> findByDescriptionContainingAndTagsName(String name, String tagName, Pageable pageable);
-    boolean isExistsByName(String name);
-    boolean iExistsById(long id);
+    boolean existsByName(String name);
 
 }

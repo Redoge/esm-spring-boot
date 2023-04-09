@@ -69,7 +69,7 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     }
     @Transactional
     public void deleteById(long id) throws ObjectNotFoundException {
-        if (!giftCertificateDao.iExistsById(id)) {
+        if (!giftCertificateDao.existsById(id)) {
             throw new ObjectNotFoundException("Gift Certificate", id);
         }
         giftCertificateDao.deleteById(id);
@@ -83,7 +83,7 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         if (!valid) {
             throw new BadRequestException();
         }
-        if (giftCertificateDao.isExistsByName(giftCertificate.getName())) {
+        if (giftCertificateDao.existsByName(giftCertificate.getName())) {
             throw new ObjectIsExistException("Gift Certificate", giftCertificate.getName());
         }
         return giftCertificateDao.save(giftCertificate);
