@@ -1,5 +1,6 @@
 package com.epam.esm.services.interfaces;
 
+import com.epam.esm.entities.GiftCertificate;
 import com.epam.esm.entities.User;
 import com.epam.esm.exceptions.BadRequestException;
 import com.epam.esm.exceptions.ObjectIsExistException;
@@ -19,4 +20,6 @@ public interface UserServiceInterface {
     User save(User user) throws ObjectIsExistException;
     void deleteById(@PathVariable long id) throws ObjectNotFoundException;
     User save(UserSaveRequestPojo userPojo) throws BadRequestException, ObjectIsExistException;
+    Page<User> getByPartName(String partName, Pageable pageable);
+
 }

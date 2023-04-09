@@ -15,4 +15,7 @@ public class GiftCertificateValidator {
                 !ObjectUtils.isEmpty(giftCertificate.getCreateDate()) &&
                 !ObjectUtils.isEmpty(giftCertificate.getLastUpdateDate());
     }
+    public boolean isNotValid(GiftCertificate giftCertificate){
+        return !isValid(giftCertificate);
+    }
 }

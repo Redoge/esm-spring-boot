@@ -1,7 +1,6 @@
 package com.epam.esm.controllers;
 
 import com.epam.esm.entities.GiftCertificate;
-import com.epam.esm.entities.Order;
 import com.epam.esm.entities.Tag;
 import com.epam.esm.entities.User;
 import com.epam.esm.exceptions.BadRequestException;
@@ -9,7 +8,6 @@ import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.UserSaveRequestPojo;
 import com.epam.esm.services.OrderService;
-import com.epam.esm.services.UserService;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.services.interfaces.UserServiceInterface;
@@ -21,15 +19,18 @@ import com.epam.esm.util.mappers.hateoas.models.TagRepresentationModel;
 import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.epam.esm.util.StringConst.deletedSuccessfully;
+
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController{
     private final UserServiceInterface userService;
     private final TagServiceInterface tagService;
@@ -39,21 +40,6 @@ public class UserController{
     private final UserHateoasMapper hateoasMapper;
     private final OrderService orderService;
     private final OrderHateoasMapper orderHateoasMapper;
-
-    public UserController(UserService userService, TagServiceInterface tagService,
-                          HateoasMapperInterface<TagRepresentationModel, Tag> tagHateoasMapper,
-                          HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> gCertHateoasMapper,
-                          GiftCertificateServiceInterface giftCertificateService,
-                          UserHateoasMapper hateoasMapper, OrderService orderService, OrderHateoasMapper orderHateoasMapper) {
-        this.userService = userService;
-        this.tagService = tagService;
-        this.tagHateoasMapper = tagHateoasMapper;
-        this.gCertHateoasMapper = gCertHateoasMapper;
-        this.giftCertificateService = giftCertificateService;
-        this.hateoasMapper = hateoasMapper;
-        this.orderService = orderService;
-        this.orderHateoasMapper = orderHateoasMapper;
-    }
 
     @GetMapping
     public PagedModel<UserRepresentationModel> getAll(Pageable pageable) throws Exception {
@@ -65,11 +51,15 @@ public class UserController{
         var users = userService.getById(id);
         return hateoasMapper.getRepresentationModel(users.get());
     }
-
+    @GetMapping("/name/{name}")
+    public PagedModel<UserRepresentationModel> getUserByPartName(@PathVariable String name, Pageable pageable) throws Exception {
+        var users = userService.getByPartName(name, pageable);
+        return hateoasMapper.getPagedModel(users, pageable);
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeById(@PathVariable long id) throws ObjectNotFoundException {
         userService.deleteById(id);
-        return ResponseEntity.ok("Deleted successfully!");
+        return ResponseEntity.ok(deletedSuccessfully);
     }
 
     @PostMapping

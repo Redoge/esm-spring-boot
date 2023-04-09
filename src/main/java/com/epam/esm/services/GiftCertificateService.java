@@ -9,12 +9,11 @@ import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.repositories.GiftCertificateRepository;
-import com.epam.esm.repositories.OrderRepository;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.GiftCertificateMapper;
-import com.epam.esm.util.sorters.GiftCertificateSorter;
 import com.epam.esm.util.validators.GiftCertificateValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,27 +26,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.esm.util.StringConst.GIFT_CERTIFICATE;
 import static io.micrometer.common.util.StringUtils.isNotEmpty;
 
 @Service
+@RequiredArgsConstructor
 public class GiftCertificateService implements GiftCertificateServiceInterface {
     private final GiftCertificateRepository giftCertificateDao;
-    private final GiftCertificateSorter giftCertificateSorter;
     private final GiftCertificateMapper giftCertificateMapper;
     private final GiftCertificateValidator giftCertificateValidator;
     private final TagService tagService;
     private final UserRepository userRepository;
 
-    public GiftCertificateService(GiftCertificateRepository giftCertificateDao, GiftCertificateSorter giftCertificateSorter,
-                                  GiftCertificateMapper giftCertificateMapper, GiftCertificateValidator giftCertificateValidator,  TagService tagService, UserRepository userRepository) {
-        this.giftCertificateDao = giftCertificateDao;
-        this.giftCertificateSorter = giftCertificateSorter;
-        this.giftCertificateMapper = giftCertificateMapper;
-        this.giftCertificateValidator = giftCertificateValidator;
-        this.tagService = tagService;
-
-        this.userRepository = userRepository;
-    }
 
     public List<GiftCertificate> getAll() {
         return giftCertificateDao.findAll();
@@ -59,7 +49,7 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     public Optional<GiftCertificate> getById(long id) throws ObjectNotFoundException {
         var gCerts = giftCertificateDao.findById(id);
         if (gCerts.isEmpty()) {
-            throw new ObjectNotFoundException("Gift Certificate", id);
+            throw new ObjectNotFoundException(GIFT_CERTIFICATE, id);
         }
         return gCerts;
     }
@@ -67,14 +57,14 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     public Optional<GiftCertificate> getByName(String name) throws ObjectNotFoundException {
         var gCerts = giftCertificateDao.findByName(name);
         if (gCerts.isEmpty()) {
-            throw new ObjectNotFoundException("Gift Certificate", name);
+            throw new ObjectNotFoundException(GIFT_CERTIFICATE, name);
         }
         return gCerts;
     }
     @Transactional
     public void deleteById(long id) throws ObjectNotFoundException {
         if (!giftCertificateDao.existsById(id)) {
-            throw new ObjectNotFoundException("Gift Certificate", id);
+            throw new ObjectNotFoundException(GIFT_CERTIFICATE, id);
         }
         giftCertificateDao.deleteById(id);
     }
@@ -83,12 +73,12 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     public GiftCertificate save(GiftCertificate giftCertificate) throws BadRequestException, ObjectIsExistException {
         giftCertificate.setCreateDate(LocalDateTime.now());
         giftCertificate.setLastUpdateDate(LocalDateTime.now());
-        var valid = giftCertificateValidator.isValid(giftCertificate);
-        if (!valid) {
+        var isNotValid = giftCertificateValidator.isNotValid(giftCertificate);
+        if (isNotValid) {
             throw new BadRequestException();
         }
         if (giftCertificateDao.existsByName(giftCertificate.getName())) {
-            throw new ObjectIsExistException("Gift Certificate", giftCertificate.getName());
+            throw new ObjectIsExistException(GIFT_CERTIFICATE, giftCertificate.getName());
         }
         return giftCertificateDao.save(giftCertificate);
     }
@@ -143,6 +133,11 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         }
 
         return new PageImpl<>(pageList, PageRequest.of(currentPage, pageSize), giftCertificates.size());
+    }
+
+    @Override
+    public Page<GiftCertificate> getByPartName(String partName, Pageable pageable) {
+        return giftCertificateDao.findByNameContaining(partName, pageable);
     }
 
     private Page<GiftCertificate> getGiftCertificateMainDtoBySearchReq(GiftCertificateSearchRequestPojo certsSearchReqPojo, Pageable pageable) {

@@ -8,23 +8,25 @@ import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.hateoas.models.GiftCertificateRepresentationModel;
+import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.epam.esm.util.StringConst.deletedSuccessfully;
+
 
 @RestController
 @RequestMapping("/api/certificates")
+@RequiredArgsConstructor
 public class GiftCertificateController {
     private final GiftCertificateServiceInterface giftCertificateService;
     private final HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> hateoasMapper;
-    public GiftCertificateController(GiftCertificateServiceInterface gCertService, HateoasMapperInterface<GiftCertificateRepresentationModel, GiftCertificate> hateoasMapper) {
-        this.giftCertificateService = gCertService;
-        this.hateoasMapper = hateoasMapper;
-    }
+
     @GetMapping
     public PagedModel<GiftCertificateRepresentationModel> getAll(@ModelAttribute GiftCertificateSearchRequestPojo req, Pageable pageable) throws Exception {
         var gCerts = giftCertificateService.getByGiftCertificateSearchRequestPojo(req, pageable);
@@ -40,7 +42,7 @@ public class GiftCertificateController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeById(@PathVariable long id) throws ObjectNotFoundException {
         giftCertificateService.deleteById(id);
-        return ResponseEntity.ok("Deleted successfully!");
+        return ResponseEntity.ok(deletedSuccessfully);
     }
 
     @PostMapping
@@ -60,5 +62,10 @@ public class GiftCertificateController {
         giftCertificateService.update(giftCert);
         var giftCertificate = giftCertificateService.getById(id);
         return ResponseEntity.ok(giftCertificate);
+    }
+    @GetMapping("/name/{name}")
+    public PagedModel<GiftCertificateRepresentationModel> getUserByPartName(@PathVariable String name, Pageable pageable) throws Exception {
+        var gCerts = giftCertificateService.getByPartName(name, pageable);
+        return hateoasMapper.getPagedModel(gCerts, pageable);
     }
 }
