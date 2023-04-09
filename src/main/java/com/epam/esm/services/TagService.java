@@ -59,7 +59,7 @@ public class TagService implements TagServiceInterface {
 
     @Transactional
     public void deleteById(long id) throws ObjectNotFoundException {
-        if (!tagDao.existsById(id)) {
+        if (!tagDao.isExistsById(id)) {
             throw new ObjectNotFoundException("Tag", id);
         }
         tagDao.deleteById(id);
@@ -67,7 +67,7 @@ public class TagService implements TagServiceInterface {
 
     @Transactional
     public Tag save(String tagName) throws ObjectIsExistException {
-        if (tagDao.existsByName(tagName)) {
+        if (tagDao.isExistsByName(tagName)) {
             throw new ObjectIsExistException("Tag", tagName);
         }
         return tagDao.save(new Tag(tagName));

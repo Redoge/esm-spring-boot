@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,7 +16,7 @@ public interface GiftCertificateRepository extends JpaRepository<GiftCertificate
     Page<GiftCertificate> findByDescriptionContaining(String description, Pageable pageable);
     Page<GiftCertificate> findByNameContainingAndTagsName(String name, String tagName, Pageable pageable);
     Page<GiftCertificate> findByDescriptionContainingAndTagsName(String name, String tagName, Pageable pageable);
-    boolean existsByName(String name);
-    boolean existsById(long id);
+    boolean isExistsByName(String name);
+    boolean iExistsById(long id);
 
 }

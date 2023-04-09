@@ -12,7 +12,6 @@ import com.epam.esm.repositories.GiftCertificateRepository;
 import com.epam.esm.repositories.UserRepository;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.GiftCertificateMapper;
-import com.epam.esm.util.sorters.GiftCertificateSorter;
 import com.epam.esm.util.validators.GiftCertificateValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -70,7 +69,7 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
     }
     @Transactional
     public void deleteById(long id) throws ObjectNotFoundException {
-        if (!giftCertificateDao.existsById(id)) {
+        if (!giftCertificateDao.iExistsById(id)) {
             throw new ObjectNotFoundException("Gift Certificate", id);
         }
         giftCertificateDao.deleteById(id);
@@ -84,7 +83,7 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
         if (!valid) {
             throw new BadRequestException();
         }
-        if (giftCertificateDao.existsByName(giftCertificate.getName())) {
+        if (giftCertificateDao.isExistsByName(giftCertificate.getName())) {
             throw new ObjectIsExistException("Gift Certificate", giftCertificate.getName());
         }
         return giftCertificateDao.save(giftCertificate);
