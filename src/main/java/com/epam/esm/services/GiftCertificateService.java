@@ -98,6 +98,8 @@ public class GiftCertificateService implements GiftCertificateServiceInterface {
             if(tagsName != null) {
                 List<Tag> tags = tagService.getTagsByTagName(tagsName);
                 newGCert.setTags(tags);
+            }else{
+                newGCert.setTags(gCert.get().getTags());
             }
             giftCertificateDao.save(newGCert);
         }
