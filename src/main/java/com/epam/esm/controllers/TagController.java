@@ -5,7 +5,6 @@ import com.epam.esm.exceptions.ObjectIsExistException;
 import com.epam.esm.exceptions.ObjectNotFoundException;
 import com.epam.esm.services.interfaces.TagServiceInterface;
 import com.epam.esm.util.mappers.hateoas.models.TagRepresentationModel;
-import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.epam.esm.util.StringConst.deletedSuccessfully;
+import static com.epam.esm.util.consts.Paths.TAGS_PATH;
 
 
 @RestController
-@RequestMapping("/api/tags")
+@RequestMapping(TAGS_PATH)
 @RequiredArgsConstructor
 public class TagController{
     private final TagServiceInterface tagService;

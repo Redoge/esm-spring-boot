@@ -27,9 +27,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.epam.esm.util.StringConst.deletedSuccessfully;
+import static com.epam.esm.util.consts.Paths.USERS_PATH;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(USERS_PATH)
 @RequiredArgsConstructor
 public class UserController{
     private final UserServiceInterface userService;
