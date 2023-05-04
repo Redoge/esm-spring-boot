@@ -12,6 +12,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.epam.esm.util.consts.Paths.*;
+
 
 @Configuration
 @EnableWebSecurity
@@ -26,13 +28,13 @@ public class SecurityConfig {
                 csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**")
+                .requestMatchers(AUTH_PATH_ALL)
                 .permitAll()
-                .requestMatchers(HttpMethod.GET)
+                .requestMatchers(HttpMethod.GET, ORDERS_PATH_ALL)
                 .permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/orders/**")
+                .requestMatchers(HttpMethod.POST, ORDERS_PATH_ALL)
                 .authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/tags/**", "/api/users/**", "/api/certificates/**")
+                .requestMatchers(HttpMethod.POST, TAGS_PATH_ALL, USERS_PATH_ALL, CERTIFICATES_PATH_ALL, ORDERS_PATH_ALL)
                 .hasAuthority(UserRole.ADMIN.toString())
                 .and()
                 .sessionManagement()

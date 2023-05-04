@@ -15,9 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.epam.esm.util.StringConst.deletedSuccessfully;
+import static com.epam.esm.util.consts.Paths.ORDERS_PATH;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping(ORDERS_PATH)
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;

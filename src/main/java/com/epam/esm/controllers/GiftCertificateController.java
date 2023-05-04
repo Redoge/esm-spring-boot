@@ -8,7 +8,6 @@ import com.epam.esm.pojo.GiftCertificateSaveRequestPojo;
 import com.epam.esm.pojo.GiftCertificateSearchRequestPojo;
 import com.epam.esm.services.interfaces.GiftCertificateServiceInterface;
 import com.epam.esm.util.mappers.hateoas.models.GiftCertificateRepresentationModel;
-import com.epam.esm.util.mappers.hateoas.models.UserRepresentationModel;
 import com.epam.esm.util.mappers.interfaces.HateoasMapperInterface;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +17,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.epam.esm.util.StringConst.deletedSuccessfully;
+import static com.epam.esm.util.consts.Paths.CERTIFICATES_PATH;
 
 
 @RestController
-@RequestMapping("/api/certificates")
+@RequestMapping(CERTIFICATES_PATH)
 @RequiredArgsConstructor
 public class GiftCertificateController {
     private final GiftCertificateServiceInterface giftCertificateService;
